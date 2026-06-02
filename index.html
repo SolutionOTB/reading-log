@@ -539,8 +539,10 @@
         </div>
       </div>
       <div class="px-5 pt-5 flex items-center justify-center">
-        <input type="file" id="cam-input" accept="image/*" capture="environment" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-        <button onclick="openCamera()" class="shutter"><div></div></button>
+        <label class="shutter" style="cursor:pointer;">
+          <div></div>
+          <input type="file" id="cam-input" accept="image/*" capture="environment" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+        </label>
       </div>
       <div class="px-5 pt-6 pb-6 mt-auto text-center">
         <button class="small font-medium" style="color:var(--accent)" onclick="go('confirm')">Type the title manually</button>
@@ -1221,7 +1223,4 @@
     }
     initSupabase();
   });
-</script>
-
-</body>
-</html>
+</scr
