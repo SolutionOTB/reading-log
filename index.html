@@ -303,7 +303,7 @@
             <div class="av av-lia w-13 h-13" style="width:52px;height:52px;font-size:20px;">O</div>
             <div class="flex-1">
               <div class="h2">Olivia</div>
-              <div class="small num">Level 7 · 12-day streak</div>
+              <div class="small num" id="welcome-lia-meta">Ready to read</div>
             </div>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
           </button>
@@ -311,7 +311,7 @@
             <div class="av av-mia" style="width:52px;height:52px;font-size:20px;">A</div>
             <div class="flex-1">
               <div class="h2">Abigail</div>
-              <div class="small num">Level 4 · 5-day streak</div>
+              <div class="small num" id="welcome-mia-meta">Ready to read</div>
             </div>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
           </button>
@@ -348,10 +348,13 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-baseline justify-between gap-2">
               <div class="h2" id="h-name">Pip</div>
-              <div class="small num"><span id="h-xp">340</span>/<span id="h-xpmax">500</span></div>
+              <button onclick="go('mascot-picker')" class="small font-medium" style="color:var(--accent);background:none;border:none;padding:0;cursor:pointer">Change</button>
             </div>
-            <div class="small mt-0.5">Level <span class="num" id="h-level">7</span> · <span id="h-tag">Bookish & loyal</span></div>
-            <div class="track mt-2"><div class="fill" id="h-xpbar" style="width:68%"></div></div>
+            <div class="small mt-0.5">Level <span class="num" id="h-level">1</span> · <span id="h-tag">Bookish & loyal</span></div>
+            <div class="flex items-baseline justify-between gap-2 mt-1">
+              <span class="small num" style="color:var(--muted);font-size:11px"><span id="h-xp">0</span>/<span id="h-xpmax">200</span> XP</span>
+            </div>
+            <div class="track mt-1"><div class="fill" id="h-xpbar" style="width:0%"></div></div>
           </div>
         </div>
       </div>
@@ -367,18 +370,18 @@
               </div>
               <div class="h3">Family reading goal</div>
             </div>
-            <div class="font-semibold num text-sm">142<span style="color:var(--muted);font-weight:400"> / 200</span></div>
+            <div class="font-semibold num text-sm">0<span style="color:var(--muted);font-weight:400"> / 200</span></div>
           </div>
           <div class="coop mt-2.5" style="height:8px">
-            <div class="s-lia" style="width:47%"></div>
-            <div class="s-mia" style="left:47%;width:24%"></div>
+            <div class="s-lia" style="width:0%"></div>
+            <div class="s-mia" style="left:0%;width:0%"></div>
           </div>
           <div class="flex items-center justify-between mt-1.5 small">
             <div class="flex items-center gap-3">
-              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--lia)"></span>Olivia 94</span>
-              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--mia)"></span>Abigail 48</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--lia)"></span>Olivia 0</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--mia)"></span>Abigail 0</span>
             </div>
-            <span>3d left</span>
+            <span>This week</span>
           </div>
         </div>
       </div>
@@ -398,17 +401,7 @@
         <h2 class="h2">My books</h2>
         <button class="small font-medium" style="color:var(--accent)" onclick="go('library')">All</button>
       </div>
-      <div class="strip no-scrollbar">
-        <div class="strip-item" onclick="go('book-detail')">
-          <div class="cover c1"><div class="cn">Peter Brown</div><div class="ct">The Wild Robot</div></div>
-          <div class="track mt-2" style="height:4px"><div class="fill" style="width:55%"></div></div>
-          <div class="small mt-1 num" style="font-size:11px">p.132 / 240</div>
-        </div>
-        <div class="strip-item" onclick="go('book-detail')">
-          <div class="cover c4"><div class="cn">T.T. Sutherland</div><div class="ct">Wings of Fire #4</div></div>
-          <div class="track mt-2" style="height:4px"><div class="fill" style="width:20%"></div></div>
-          <div class="small mt-1 num" style="font-size:11px">p.58 / 280</div>
-        </div>
+      <div class="strip no-scrollbar" id="my-books-strip">
         <button class="strip-item flex flex-col items-center justify-center" onclick="go('snap')" style="border:1.5px dashed var(--line);border-radius:8px;color:var(--muted)">
           <div class="aspect-[2/3] w-full flex flex-col items-center justify-center gap-1.5">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -416,27 +409,11 @@
           </div>
         </button>
       </div>
+      <div id="strip-helper" class="px-6 small" style="margin-top:-2px;color:var(--muted)">Tap + to add your first book.</div>
 
       <!-- Recently finished -->
       <div class="px-6 pt-3 pb-2"><h3 class="h3">Recently finished</h3></div>
-      <div class="px-6 pb-4 no-scrollbar" style="display:flex;flex-wrap:nowrap;gap:10px;overflow-x:auto">
-        <div style="flex:0 0 46px">
-          <div class="cover c5" style="padding:5px"><div class="ct" style="font-size:8px">Dog Man</div></div>
-          <div class="stars-sm mt-1" style="font-size:9px">★★★★★</div>
-        </div>
-        <div style="flex:0 0 46px">
-          <div class="cover c3" style="padding:5px"><div class="ct" style="font-size:8px">Magic Tree</div></div>
-          <div class="stars-sm mt-1" style="font-size:9px">★★★★★</div>
-        </div>
-        <div style="flex:0 0 46px">
-          <div class="cover c2" style="padding:5px"><div class="ct" style="font-size:8px">Despereaux</div></div>
-          <div class="stars-sm mt-1" style="font-size:9px">★★★★☆</div>
-        </div>
-        <div style="flex:0 0 46px">
-          <div class="cover c6" style="padding:5px"><div class="ct" style="font-size:8px">Pax</div></div>
-          <div class="stars-sm mt-1" style="font-size:9px">★★★★★</div>
-        </div>
-      </div>
+      <div class="px-6 pb-4 small" style="color:var(--muted)" id="recent-finished">Books you finish will appear here.</div>
 
       <div class="tabbar">
         <button class="tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>Home</button>
@@ -585,7 +562,7 @@
         <h1 class="h1" style="font-size:20px">Is this it?</h1>
       </div>
       <div class="px-6 pt-4 flex gap-4 items-end">
-        <div class="cover c1" style="width:96px" id="cf-cover"><div class="cn" id="cf-cover-author">Peter Brown</div><div class="ct" id="cf-cover-title">The Wild Robot</div></div>
+        <div class="cover c1" style="width:96px" id="cf-cover"><img id="cf-cover-img" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:inherit"><div class="cn" id="cf-cover-author">Author</div><div class="ct" id="cf-cover-title">Book title</div></div>
         <div class="flex-1 pb-1">
           <div class="h2 leading-tight" id="cf-title">The Wild Robot</div>
           <div class="small" id="cf-author">Peter Brown</div>
@@ -620,55 +597,21 @@
         <button class="icon-btn" onclick="go('snap')" style="background:var(--accent);color:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></button>
       </div>
       <div class="px-6 pt-2 flex gap-2 text-xs font-medium">
-        <button class="px-3 py-1.5 rounded-full" style="background:var(--accent);color:#fff">Finished 14</button>
-        <button class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)">Reading 2</button>
-        <button class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)">Want 5</button>
+        <button data-lib-tab="finished" onclick="setLibraryFilter('finished')" class="px-3 py-1.5 rounded-full" style="background:var(--accent);color:#fff;border:1px solid var(--accent)" id="lib-count-finished">Finished 0</button>
+        <button data-lib-tab="reading"  onclick="setLibraryFilter('reading')"  class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)" id="lib-count-reading">Reading 0</button>
+        <button data-lib-tab="want"     onclick="setLibraryFilter('want')"     class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)" id="lib-count-want">Want 0</button>
       </div>
-      <div class="px-6 pt-4 pb-6 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        <div onclick="go('book-detail')"><div class="cover c5"><div class="cn">Pilkey</div><div class="ct">Dog Man</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
-        <div onclick="go('book-detail')"><div class="cover c4"><div class="cn">Sutherland</div><div class="ct">Wings of Fire #3</div></div><div class="stars-sm mt-1.5">★★★★☆</div></div>
-        <div onclick="go('book-detail')"><div class="cover c3"><div class="cn">Osborne</div><div class="ct">Magic Tree #28</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
-        <div onclick="go('book-detail')"><div class="cover c7"><div class="cn">Sanders</div><div class="ct">Unicorn Academy</div></div><div class="stars-sm mt-1.5">★★★☆☆</div></div>
-        <div onclick="go('book-detail')"><div class="cover c2"><div class="cn">Pennypacker</div><div class="ct">Pax</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
-        <div onclick="go('book-detail')"><div class="cover c6"><div class="cn">Parry</div><div class="ct">Whale of the Wild</div></div><div class="stars-sm mt-1.5">★★★★☆</div></div>
-        <div onclick="go('book-detail')"><div class="cover c9"><div class="cn">Lobel</div><div class="ct">Frog & Toad</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
-        <div onclick="go('book-detail')"><div class="cover c8"><div class="cn">Applegate</div><div class="ct">One & Only Ivan</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
-        <div onclick="go('book-detail')"><div class="cover c1"><div class="cn">DiCamillo</div><div class="ct">Despereaux</div></div><div class="stars-sm mt-1.5">★★★★☆</div></div>
-      </div>
+      <div class="px-6 pt-4 pb-6 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3" id="library-grid" data-filter="finished"></div>
     </section>
 
     <!-- ============ BOOK DETAIL / FINISH ============ -->
     <section class="screen" data-screen="book-detail">
       <div class="px-5 pt-5 pb-1 flex items-center gap-2">
         <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
-        <h1 class="h1" style="font-size:20px">Finished it?</h1>
+        <h1 class="h1" style="font-size:20px">Book</h1>
       </div>
-      <div class="px-6 pt-4 flex gap-4 items-end">
-        <div class="cover c1" style="width:80px"><div class="cn">Peter Brown</div><div class="ct">The Wild Robot</div></div>
-        <div class="flex-1 pb-1">
-          <div class="h2 leading-tight">The Wild Robot</div>
-          <div class="small num">240 pages · 9 days</div>
-        </div>
-      </div>
-      <div class="px-6 pt-7">
-        <div class="h3 mb-2.5">How many stars?</div>
-        <div class="flex gap-1.5" id="star-row">
-          <span class="star on" data-star="1">★</span><span class="star on" data-star="2">★</span><span class="star on" data-star="3">★</span><span class="star on" data-star="4">★</span><span class="star" data-star="5">★</span>
-        </div>
-      </div>
-      <div class="px-6 pt-5">
-        <div class="h3 mb-2.5">What did you think?</div>
-        <textarea class="w-full p-3.5 text-sm card" rows="3" placeholder="Funny? Sad? Worth telling your sister?" style="resize:none"></textarea>
-      </div>
-      <div class="px-6 pt-4">
-        <div class="flex flex-wrap gap-2">
-          <button class="sug">Funny</button><button class="sug" style="background:var(--accent-l);color:var(--accent-d);border-color:#CDE5E0">Touching</button><button class="sug">Wow</button><button class="sug">A bit slow</button>
-        </div>
-      </div>
-      <div class="px-5 pt-6 pb-6 mt-auto space-y-2">
-        <button class="btn btn-primary btn-block btn-lg" onclick="submitReview()">Mark as finished</button>
-        <button class="btn btn-ghost btn-block" onclick="go('kid-home')">Not yet</button>
-      </div>
+      <div id="book-detail-content"></div>
+      <div class="px-5 pt-6 pb-6 mt-auto space-y-2" id="book-detail-actions"></div>
     </section>
 
     <!-- ============ BADGES ============ -->
@@ -711,33 +654,17 @@
           <div class="small" style="color:var(--accent)">Ready to help</div>
         </div>
       </div>
-      <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3" id="chat-log">
-        <div class="bubble-bot">Hi Olivia. You just finished <b>The Wild Robot</b> — five stars. Want something similar?</div>
-        <div class="bubble-user">Yes — something with animals please.</div>
-        <div class="bubble-bot">You also loved <b>Pax</b> and <b>A Whale of the Wild</b>. How about a story where animals team up for a big adventure?</div>
-        <div class="bubble-user">Maybe. What is it?</div>
-        <div class="bubble-bot" style="padding:0;overflow:hidden">
-          <div class="flex gap-3 p-3">
-            <div class="cover c2 shrink-0" style="width:56px"><div class="ct" style="font-size:8px">Pax: Journey Home</div></div>
-            <div class="flex-1 min-w-0">
-              <div class="h3 leading-tight">Pax: Journey Home</div>
-              <div class="small">Sara Pennypacker · ~270 pages</div>
-              <div class="body mt-1.5" style="font-size:12.5px">Sequel to <i>Pax</i>. A boy and his fox find each other again.</div>
-            </div>
-          </div>
-          <div class="flex gap-2 px-3 pb-3 pt-2 border-t" style="border-color:var(--line)">
-            <button class="sug" style="background:var(--accent);color:#fff;border-color:var(--accent)">Add to want-to-read</button>
-            <button class="sug">More</button>
-          </div>
-        </div>
+      <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3" id="chat-log"></div>
+      <div class="px-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar" id="chat-suggestions">
+        <button class="sug" onclick="sendChat('Pick my next book')">Pick my next book</button>
+        <button class="sug" onclick="sendChat('Something funny please')">Something funny</button>
+        <button class="sug" onclick="sendChat('More fantasy please')">More fantasy</button>
+        <button class="sug" onclick="sendChat('Shorter please')">Shorter please</button>
       </div>
-      <div class="px-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
-        <button class="sug">Pick my next book</button><button class="sug">Something funny</button><button class="sug">More fantasy</button><button class="sug">Shorter please</button>
-      </div>
-      <div class="px-4 pb-5 pt-2 border-t flex items-center gap-2" style="border-color:var(--line)">
-        <input type="text" placeholder="Ask Book Buddy…" class="flex-1 rounded-full px-4 py-3 text-sm" style="background:var(--line-2);border:1px solid var(--line)">
-        <button class="rounded-full" style="width:44px;height:44px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-      </div>
+      <form id="chat-form" class="px-4 pb-5 pt-2 border-t flex items-center gap-2" style="border-color:var(--line)" onsubmit="event.preventDefault(); const v=this.q.value.trim(); if(v){ sendChat(v); this.q.value=''; }">
+        <input type="text" name="q" placeholder="Ask Book Buddy…" class="flex-1 rounded-full px-4 py-3 text-sm" style="background:var(--line-2);border:1px solid var(--line)" autocomplete="off">
+        <button type="submit" class="rounded-full" style="width:44px;height:44px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+      </form>
     </section>
 
     <!-- ============ PARENT GATE ============ -->
@@ -778,14 +705,14 @@
               <div class="h2 mt-1">Read 200 minutes</div>
             </div>
             <div class="text-right">
-              <div class="font-semibold num" style="font-size:22px">142<span style="color:var(--muted);font-weight:400;font-size:16px"> / 200</span></div>
-              <div class="small">3 days left</div>
+              <div class="font-semibold num" style="font-size:22px"><span id="dash-fam-num">0</span><span style="color:var(--muted);font-weight:400;font-size:16px"> / 200</span></div>
+              <div class="small">This week</div>
             </div>
           </div>
-          <div class="coop mt-3" style="height:12px"><div class="s-lia" style="width:47%"></div><div class="s-mia" style="left:47%;width:24%"></div></div>
+          <div class="coop mt-3" style="height:12px"><div class="s-lia" id="dash-fam-bar-lia" style="width:0%"></div><div class="s-mia" id="dash-fam-bar-mia" style="left:0%;width:0%"></div></div>
           <div class="flex items-center gap-4 mt-2 small">
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--lia)"></span>Olivia 94</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--mia)"></span>Abigail 48</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--lia)"></span><span id="dash-fam-lia">Olivia 0</span></span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--mia)"></span><span id="dash-fam-mia">Abigail 0</span></span>
           </div>
         </div>
 
@@ -797,21 +724,14 @@
             <span class="chip ml-auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg><span class="num">12</span></span>
           </div>
           <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">142</div><div class="eyebrow">Min</div></div>
-            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">3</div><div class="eyebrow">Books</div></div>
-            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">2</div><div class="eyebrow">Shields</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px" id="dash-lia-min">0</div><div class="eyebrow">Min</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px" id="dash-lia-books">0</div><div class="eyebrow">Books</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px" id="dash-lia-shields">0</div><div class="eyebrow">Shields</div></div>
           </div>
-          <div class="mt-4"><div class="eyebrow mb-2">Top genres</div><div class="flex gap-1.5 flex-wrap"><span class="tag">Fantasy</span><span class="tag">Animal</span><span class="tag">Comic</span></div></div>
+          <div class="mt-4"><div class="eyebrow mb-2">Top genres</div><div class="flex gap-1.5 flex-wrap" id="dash-lia-genres"></div></div>
           <div class="mt-4">
             <div class="eyebrow mb-2">This week</div>
-            <div class="flex items-end gap-2 h-14">
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:60%;background:var(--lia)"></div><div class="small" style="font-size:9px">A</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:40%;background:var(--lia)"></div><div class="small" style="font-size:9px">T</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:80%;background:var(--lia)"></div><div class="small" style="font-size:9px">W</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:14%;background:var(--line)"></div><div class="small" style="font-size:9px">T</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:70%;background:var(--lia)"></div><div class="small" style="font-size:9px">F</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:90%;background:var(--lia)"></div><div class="small" style="font-size:9px">S</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:50%;background:var(--lia)"></div><div class="small" style="font-size:9px">S</div></div>
+            <div class="flex items-end gap-2 h-14" id="dash-lia-week">
             </div>
           </div>
         </div>
@@ -824,21 +744,14 @@
             <span class="chip ml-auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg><span class="num">5</span></span>
           </div>
           <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">88</div><div class="eyebrow">Min</div></div>
-            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">2</div><div class="eyebrow">Books</div></div>
-            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">1</div><div class="eyebrow">Shields</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px" id="dash-mia-min">0</div><div class="eyebrow">Min</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px" id="dash-mia-books">0</div><div class="eyebrow">Books</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px" id="dash-mia-shields">0</div><div class="eyebrow">Shields</div></div>
           </div>
-          <div class="mt-4"><div class="eyebrow mb-2">Top genres</div><div class="flex gap-1.5 flex-wrap"><span class="tag">Unicorn</span><span class="tag">Early reader</span><span class="tag">Magic</span></div></div>
+          <div class="mt-4"><div class="eyebrow mb-2">Top genres</div><div class="flex gap-1.5 flex-wrap" id="dash-mia-genres"></div></div>
           <div class="mt-4">
             <div class="eyebrow mb-2">This week</div>
-            <div class="flex items-end gap-2 h-14">
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:40%;background:var(--mia)"></div><div class="small" style="font-size:9px">A</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:55%;background:var(--mia)"></div><div class="small" style="font-size:9px">T</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:8%;background:var(--line)"></div><div class="small" style="font-size:9px">W</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:35%;background:var(--mia)"></div><div class="small" style="font-size:9px">T</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:50%;background:var(--mia)"></div><div class="small" style="font-size:9px">F</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:65%;background:var(--mia)"></div><div class="small" style="font-size:9px">S</div></div>
-              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:30%;background:var(--mia)"></div><div class="small" style="font-size:9px">S</div></div>
+            <div class="flex items-end gap-2 h-14" id="dash-mia-week">
             </div>
           </div>
         </div>
@@ -846,23 +759,8 @@
         <!-- Activity -->
         <div class="full card p-5">
           <div class="h2 mb-3" style="font-size:16px">Recent activity</div>
-          <ul class="space-y-3">
-            <li class="flex items-center gap-3">
-              <div class="av av-lia w-8 h-8" style="font-size:12px">O</div>
-              <div class="flex-1 min-w-0"><div class="text-sm"><b>Olivia</b> finished <b>The Wild Robot</b> <span class="stars-sm">★★★★★</span></div><div class="small">Today, 7:42 PM</div></div>
-            </li>
-            <li class="flex items-center gap-3">
-              <div class="av av-mia w-8 h-8" style="font-size:12px">A</div>
-              <div class="flex-1 min-w-0"><div class="text-sm"><b>Abigail</b> logged 20 min · <b>Unicorn Academy</b></div><div class="small">Today, 6:15 PM</div></div>
-            </li>
-            <li class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--line-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="var(--ink-2)"><path d="M12 2L4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5z"/></svg></div>
-              <div class="flex-1 min-w-0"><div class="text-sm"><b>Olivia</b> used a shield to save her streak</div><div class="small">Yesterday</div></div>
-            </li>
-            <li class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--accent-l)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></div>
-              <div class="flex-1 min-w-0"><div class="text-sm">Family hit <b>last week's goal</b></div><div class="small">Sunday</div></div>
-            </li>
+          <ul class="space-y-3" id="dash-feed">
+            <li class="small" style="color:var(--muted)">No activity yet — log some reading.</li>
           </ul>
         </div>
       </div>
@@ -985,8 +883,8 @@
   const DEFAULT_STATE = {
     activeKid:'lia',
     kids:{
-      lia:{ name:'Olivia', mascot:'penguin', level:7, xp:340, xpMax:500, streak:12, shields:2 },
-      mia:{ name:'Abigail', mascot:'axolotl', level:4, xp:180, xpMax:350, streak:5, shields:1 }
+      lia:{ name:'Olivia', mascot:'penguin', level:1, xp:0, xpMax:200, streak:0, shields:0 },
+      mia:{ name:'Abigail', mascot:'axolotl', level:1, xp:0, xpMax:200, streak:0, shields:0 }
     },
     selectedMascot:'penguin',
     pin:'',
@@ -1033,7 +931,21 @@
       });
       saveState();
       paintHome();
+      paintWelcome();
     } catch(e) { console.warn('Supabase init error:', e); }
+  }
+
+  function paintWelcome(){
+    const fmt = (k) => {
+      const x = state.kids[k];
+      if (!x) return 'Ready to read';
+      if (x.level <= 1 && x.streak === 0 && x.xp === 0) return 'Ready to read';
+      return `Level ${x.level} · ${x.streak}-day streak`;
+    };
+    const el1 = document.getElementById('welcome-lia-meta');
+    const el2 = document.getElementById('welcome-mia-meta');
+    if (el1) el1.textContent = fmt('lia');
+    if (el2) el2.textContent = fmt('mia');
   }
 
   async function syncKidToDB(stateKey) {
@@ -1068,7 +980,10 @@
     t.classList.add('active','fade-in');
     document.getElementById('app').classList.toggle('wide', name==='dashboard');
     if(name==='mascot-picker') renderMascotGrid();
-    if(name==='kid-home') paintHome();
+    if(name==='kid-home') { paintHome(); paintMyBooksStrip(); paintRecentFinished(); }
+    if(name==='library')  { paintLibrary(); }
+    if(name==='dashboard'){ paintDashboard(); }
+    if(name==='chat')     { openChat(); }
     if(name==='snap') startCamera(); else stopCamera();
     window.scrollTo(0,0);
   }
@@ -1142,8 +1057,492 @@
       row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',(i+1)<=n));
     });
   }
-  function submitReview(){ toast('Review saved · +50 XP'); setTimeout(()=>go('kid-home'),600); }
-  function addBook(s){ toast(s==='reading'?'Added to reading':'Saved for later'); setTimeout(()=>go('kid-home'),600); }
+  // ===== Books: save / load / view / delete =====
+  let lastIdentifiedBook = null;     // set by handleCapturedImage
+  let viewingBookId = null;          // current book on book-detail
+  let viewingKidBook = null;         // the kid_books row (joined w/ books)
+  let chatMessages = [];             // current chat thread
+  let chatBusy = false;
+
+  async function addBook(status) {
+    const book = lastIdentifiedBook;
+    if (!sb || !kidDbIds[state.activeKid]) { toast('Not connected yet'); return; }
+    if (!book || !book.title) { toast('No book to save'); return; }
+    try {
+      // Find existing book in this household by (title, author) — case-insensitive
+      let bookId = null;
+      const { data: existing } = await sb.from('books')
+        .select('id')
+        .eq('household_id', HOUSEHOLD_ID)
+        .ilike('title', book.title)
+        .limit(5);
+      if (existing && existing.length > 0) {
+        bookId = existing[0].id;
+      } else {
+        const ins = await sb.from('books').insert({
+          household_id: HOUSEHOLD_ID,
+          title: book.title,
+          author: book.author || null,
+          series: book.series || null,
+          series_number: book.series_number != null ? book.series_number : null,
+          pages: book.pages || null,
+          google_books_id: book.google_books_id || null,
+          cover_url: book.cover_url || null,
+          genres: Array.isArray(book.genres) ? book.genres : null
+        }).select('id').single();
+        if (ins.error) throw ins.error;
+        bookId = ins.data.id;
+      }
+      const kb = await sb.from('kid_books').upsert({
+        kid_id: kidDbIds[state.activeKid],
+        book_id: bookId,
+        status: (status === 'reading' ? 'reading' : 'want'),
+        started_at: (status === 'reading' ? new Date().toISOString() : null)
+      }, { onConflict: 'kid_id,book_id' });
+      if (kb.error) throw kb.error;
+      toast(status === 'reading' ? 'Added to reading' : 'Saved for later');
+      lastIdentifiedBook = null;
+      setTimeout(() => go('kid-home'), 600);
+    } catch (e) {
+      console.warn('Save book failed:', e);
+      toast('Save failed: ' + (e.message || 'unknown'));
+    }
+  }
+
+  async function loadKidBooks() {
+    if (!sb || !kidDbIds[state.activeKid]) return { reading: [], finished: [], want: [] };
+    const { data, error } = await sb.from('kid_books')
+      .select('id, status, current_page, started_at, finished_at, rating, notes, feeling, books:book_id(*)')
+      .eq('kid_id', kidDbIds[state.activeKid]);
+    if (error) { console.warn('loadKidBooks:', error.message); return { reading: [], finished: [], want: [] }; }
+    const all = data || [];
+    const reading  = all.filter(kb => kb.status === 'reading');
+    const finished = all.filter(kb => kb.status === 'finished').sort((a,b) => (b.finished_at || '').localeCompare(a.finished_at || ''));
+    const want     = all.filter(kb => kb.status === 'want');
+    return { reading, finished, want, all };
+  }
+
+  function coverHTML(book) {
+    if (book && book.cover_url) {
+      return `<div class="cover" style="padding:0;overflow:hidden;background:#1F2937;position:relative"><img src="${book.cover_url}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></div>`;
+    }
+    // Fallback flat color tile w/ title
+    const palette = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
+    const cls = palette[Math.abs(hashString(book && book.title || '')) % palette.length];
+    return `<div class="cover ${cls}"><div class="cn">${escapeHtml(book && book.author || '')}</div><div class="ct">${escapeHtml(book && book.title || '')}</div></div>`;
+  }
+  function hashString(s){ let h=0; for(let i=0;i<s.length;i++){ h=((h<<5)-h)+s.charCodeAt(i); h|=0; } return h; }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+  async function paintMyBooksStrip() {
+    const strip = document.getElementById('my-books-strip');
+    if (!strip) return;
+    const { reading } = await loadKidBooks();
+    strip.innerHTML = '';
+    reading.forEach(kb => {
+      const b = kb.books;
+      if (!b) return;
+      const pct = (b.pages && kb.current_page) ? Math.round(100 * kb.current_page / b.pages) : 0;
+      const item = document.createElement('div');
+      item.className = 'strip-item';
+      item.onclick = () => viewBook(kb.id);
+      item.innerHTML = coverHTML(b) +
+        `<div class="track mt-2" style="height:4px"><div class="fill" style="width:${pct}%"></div></div>` +
+        `<div class="small mt-1 num" style="font-size:11px">${kb.current_page ? 'p.' + kb.current_page : ''}${b.pages ? ' / ' + b.pages : ''}</div>`;
+      strip.appendChild(item);
+    });
+    // Always append the Add tile
+    const add = document.createElement('button');
+    add.className = 'strip-item flex flex-col items-center justify-center';
+    add.setAttribute('onclick', "go('snap')");
+    add.setAttribute('style', 'border:1.5px dashed var(--line);border-radius:8px;color:var(--muted)');
+    add.innerHTML = '<div class="aspect-[2/3] w-full flex flex-col items-center justify-center gap-1.5"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><span style="font-size:11px;font-weight:500">Add</span></div>';
+    strip.appendChild(add);
+    // Toggle the helper message
+    const helper = document.getElementById('strip-helper');
+    if (helper) helper.style.display = reading.length > 0 ? 'none' : '';
+  }
+
+  async function paintRecentFinished() {
+    const el = document.getElementById('recent-finished');
+    if (!el) return;
+    const { finished } = await loadKidBooks();
+    if (finished.length === 0) {
+      el.innerHTML = '<div class="small" style="color:var(--muted)">Books you finish will appear here.</div>';
+      return;
+    }
+    const items = finished.slice(0, 6).map(kb => {
+      const b = kb.books; if (!b) return '';
+      const stars = '★'.repeat(kb.rating || 0) + '☆'.repeat(5 - (kb.rating || 0));
+      return `<div style="flex:0 0 52px;cursor:pointer" onclick="viewBook('${kb.id}')">
+        ${b.cover_url
+          ? `<div class="cover" style="padding:0;overflow:hidden;background:#1F2937;position:relative;width:52px;"><img src="${b.cover_url}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></div>`
+          : `<div class="cover c${Math.abs(hashString(b.title||'')) % 9 + 1}" style="padding:5px;width:52px;"><div class="ct" style="font-size:8px">${escapeHtml((b.title||'').slice(0,18))}</div></div>`
+        }
+        <div class="stars-sm mt-1" style="font-size:9px">${stars}</div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div style="display:flex;flex-wrap:nowrap;gap:10px;overflow-x:auto" class="no-scrollbar">${items}</div>`;
+  }
+
+  async function paintLibrary() {
+    const grid = document.getElementById('library-grid');
+    if (!grid) return;
+    const { reading, finished, want, all } = await loadKidBooks();
+    document.getElementById('lib-count-finished').textContent = 'Finished ' + finished.length;
+    document.getElementById('lib-count-reading').textContent  = 'Reading '  + reading.length;
+    document.getElementById('lib-count-want').textContent     = 'Want '     + want.length;
+    const filter = grid.dataset.filter || 'finished';
+    const list = filter === 'finished' ? finished : (filter === 'reading' ? reading : want);
+    if (list.length === 0) {
+      grid.innerHTML = `<div class="col-span-3 md:col-span-4 lg:col-span-5 text-center" style="padding:30px 10px">
+        <div class="small mb-3" style="color:var(--muted)">${filter === 'finished' ? 'No finished books yet.' : (filter === 'reading' ? 'No books in progress.' : 'No saved-for-later books.')}</div>
+        <button class="btn btn-primary" onclick="go('snap')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add a book
+        </button>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = list.map(kb => {
+      const b = kb.books; if (!b) return '';
+      const stars = filter === 'finished' && kb.rating ? '★'.repeat(kb.rating) + '☆'.repeat(5 - kb.rating) : '';
+      return `<div onclick="viewBook('${kb.id}')">${coverHTML(b)}${stars ? `<div class="stars-sm mt-1.5">${stars}</div>` : ''}</div>`;
+    }).join('');
+  }
+
+  function setLibraryFilter(f) {
+    const grid = document.getElementById('library-grid');
+    if (!grid) return;
+    grid.dataset.filter = f;
+    document.querySelectorAll('[data-lib-tab]').forEach(b => {
+      const active = b.dataset.libTab === f;
+      b.style.background = active ? 'var(--accent)' : 'var(--surface)';
+      b.style.color = active ? '#fff' : 'var(--ink-2)';
+      b.style.borderColor = active ? 'var(--accent)' : 'var(--line)';
+    });
+    paintLibrary();
+  }
+
+  async function viewBook(kidBookId) {
+    if (!sb) { toast('Not connected'); return; }
+    try {
+      const { data, error } = await sb.from('kid_books')
+        .select('id, status, current_page, started_at, finished_at, rating, notes, feeling, books:book_id(*)')
+        .eq('id', kidBookId).single();
+      if (error || !data) throw (error || new Error('not found'));
+      viewingKidBook = data;
+      viewingBookId = data.books && data.books.id;
+      paintBookDetail();
+      go('book-detail');
+    } catch (e) { console.warn('viewBook:', e); toast('Could not load book'); }
+  }
+
+  function paintBookDetail() {
+    const kb = viewingKidBook; if (!kb) return;
+    const b = kb.books || {};
+    const el = document.getElementById('book-detail-content');
+    if (!el) return;
+    const days = (kb.started_at && kb.finished_at)
+      ? Math.max(1, Math.round((new Date(kb.finished_at) - new Date(kb.started_at)) / 86400000))
+      : null;
+    const meta = [b.pages ? b.pages + ' pages' : '', days ? days + ' days' : ''].filter(Boolean).join(' · ');
+    const coverInner = b.cover_url
+      ? `<img src="${b.cover_url}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit">`
+      : `<div class="cn">${escapeHtml(b.author || '')}</div><div class="ct">${escapeHtml(b.title || '')}</div>`;
+    const cls = b.cover_url ? 'cover' : ('cover ' + ['c1','c2','c3','c4','c5','c6','c7','c8','c9'][Math.abs(hashString(b.title||'')) % 9]);
+    const finished = kb.status === 'finished';
+    el.innerHTML = `
+      <div class="px-6 pt-4 flex gap-4 items-end">
+        <div class="${cls}" style="width:96px;${b.cover_url ? 'padding:0;background:#1F2937;position:relative;overflow:hidden':''}">${coverInner}</div>
+        <div class="flex-1 pb-1">
+          <div class="h2 leading-tight">${escapeHtml(b.title || '(no title)')}</div>
+          <div class="small">${escapeHtml(b.author || '')}</div>
+          <div class="small num" style="margin-top:4px">${meta}</div>
+          ${Array.isArray(b.genres) && b.genres.length ? `<div class="mt-2 flex gap-1.5 flex-wrap">${b.genres.map(g => `<span class="tag">${escapeHtml(g)}</span>`).join('')}</div>` : ''}
+        </div>
+      </div>
+      ${finished ? `
+        <div class="px-6 pt-6">
+          <div class="h3 mb-2">Your rating</div>
+          <div class="stars-sm" style="font-size:18px">${'★'.repeat(kb.rating||0) + '☆'.repeat(5-(kb.rating||0))}</div>
+          ${kb.notes ? `<div class="mt-3 p-3 card" style="border-radius:14px"><div class="small mb-1" style="color:var(--muted)">Your note</div><div class="text-sm">${escapeHtml(kb.notes)}</div></div>` : ''}
+        </div>
+      ` : `
+        <div class="px-6 pt-6">
+          <div class="h3 mb-2.5">Finished reading it?</div>
+          <div class="flex gap-1.5" id="star-row">
+            ${[1,2,3,4,5].map(n => `<span class="star" data-star="${n}">★</span>`).join('')}
+          </div>
+        </div>
+        <div class="px-6 pt-5">
+          <div class="h3 mb-2.5">What did you think?</div>
+          <textarea id="bd-notes" class="w-full p-3.5 text-sm card" rows="3" placeholder="Funny? Sad? Worth telling your sister?" style="resize:none"></textarea>
+        </div>
+      `}
+    `;
+    document.getElementById('book-detail-actions').innerHTML = finished ? `
+      <button class="btn btn-secondary btn-block" onclick="deleteBook()" style="color:#B91C1C">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+        Remove from library
+      </button>
+      <button class="btn btn-ghost btn-block" onclick="go('kid-home')">Back</button>
+    ` : `
+      <button class="btn btn-primary btn-block btn-lg" onclick="markFinished()">Mark as finished</button>
+      <button class="btn btn-secondary btn-block" onclick="deleteBook()" style="color:#B91C1C">Remove from library</button>
+    `;
+    setupStars();
+  }
+
+  async function markFinished() {
+    if (!sb || !viewingKidBook) return;
+    const stars = document.querySelectorAll('#star-row .star.on').length || 0;
+    const notes = (document.getElementById('bd-notes') || {}).value || '';
+    const { error } = await sb.from('kid_books').update({
+      status: 'finished',
+      finished_at: new Date().toISOString(),
+      rating: stars || null,
+      notes: notes || null
+    }).eq('id', viewingKidBook.id);
+    if (error) { toast('Save failed: ' + error.message); return; }
+    toast('Marked as finished');
+    setTimeout(() => go('kid-home'), 600);
+  }
+
+  async function deleteBook() {
+    if (!sb || !viewingKidBook) return;
+    if (!confirm('Remove this book from your library?')) return;
+    const { error } = await sb.from('kid_books').delete().eq('id', viewingKidBook.id);
+    if (error) { toast('Delete failed: ' + error.message); return; }
+    toast('Removed');
+    viewingKidBook = null; viewingBookId = null;
+    setTimeout(() => go('kid-home'), 400);
+  }
+
+  function submitReview(){
+    // Legacy entry — redirect to new flow
+    markFinished();
+  }
+
+  // ===== Chat (Book Buddy) =====
+  function appendChatMessage(role, content) {
+    const log = document.getElementById('chat-log');
+    if (!log) return;
+    const wrap = document.createElement('div');
+    wrap.className = role === 'user' ? 'bubble-user' : 'bubble-bot';
+    wrap.style.whiteSpace = 'pre-wrap';
+    wrap.textContent = content;
+    log.appendChild(wrap);
+    log.scrollTop = log.scrollHeight;
+  }
+  function appendChatTyping() {
+    const log = document.getElementById('chat-log');
+    if (!log) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'bubble-bot';
+    wrap.id = 'chat-typing';
+    wrap.textContent = '…';
+    log.appendChild(wrap);
+    log.scrollTop = log.scrollHeight;
+  }
+  function removeChatTyping() {
+    const t = document.getElementById('chat-typing');
+    if (t) t.remove();
+  }
+
+  async function openChat() {
+    chatMessages = [];
+    const log = document.getElementById('chat-log');
+    if (log) log.innerHTML = '';
+    const kid = state.kids[state.activeKid];
+    const greeting = `Hi ${kid.name}! I'm Book Buddy. Want help finding your next book?`;
+    appendChatMessage('assistant', greeting);
+  }
+
+  async function buildKidContext() {
+    const kid = state.kids[state.activeKid];
+    const ctx = { name: kid.name, age: null, loved: [], liked: [], reading: [], want: [], topGenres: [] };
+    // Try to fetch age from DB
+    try {
+      if (sb && kidDbIds[state.activeKid]) {
+        const { data: kidRow } = await sb.from('kids').select('age').eq('id', kidDbIds[state.activeKid]).single();
+        if (kidRow) ctx.age = kidRow.age;
+        const { data: kbs } = await sb.from('kid_books')
+          .select('status, rating, books:book_id(title, author, genres)')
+          .eq('kid_id', kidDbIds[state.activeKid]);
+        const list = kbs || [];
+        ctx.loved = list.filter(k => k.status === 'finished' && k.rating === 5).map(k => k.books).filter(Boolean);
+        ctx.liked = list.filter(k => k.status === 'finished' && k.rating === 4).map(k => k.books).filter(Boolean);
+        ctx.reading = list.filter(k => k.status === 'reading').map(k => k.books).filter(Boolean);
+        ctx.want = list.filter(k => k.status === 'want').map(k => k.books).filter(Boolean);
+        // Top genres
+        const counts = {};
+        list.forEach(k => {
+          if (k.status === 'finished' && k.books && Array.isArray(k.books.genres)) {
+            k.books.genres.forEach(g => counts[g] = (counts[g] || 0) + 1);
+          }
+        });
+        ctx.topGenres = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 4).map(x => x[0]);
+      }
+    } catch (e) { console.warn('kid context:', e); }
+    return ctx;
+  }
+
+  async function sendChat(text) {
+    if (chatBusy || !text) return;
+    chatBusy = true;
+    appendChatMessage('user', text);
+    chatMessages.push({ role: 'user', content: text });
+    appendChatTyping();
+    try {
+      const kidContext = await buildKidContext();
+      const resp = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kidContext, messages: chatMessages })
+      });
+      const data = await resp.json();
+      removeChatTyping();
+      if (!resp.ok || data.error) {
+        appendChatMessage('assistant', '(Sorry — something went wrong. ' + (data.error || '') + ')');
+      } else {
+        chatMessages.push({ role: 'assistant', content: data.message });
+        appendChatMessage('assistant', data.message);
+      }
+    } catch (e) {
+      removeChatTyping();
+      appendChatMessage('assistant', '(Network error — try again in a moment.)');
+    } finally {
+      chatBusy = false;
+    }
+  }
+
+  // ===== Parent dashboard =====
+  function weekStartIso() {
+    const d = new Date(); d.setDate(d.getDate() - d.getDay()); d.setHours(0,0,0,0);
+    return d.toISOString().slice(0, 10);
+  }
+
+  async function paintDashboard() {
+    if (!sb) return;
+    const wkStart = weekStartIso();
+    // Family + per-kid stats
+    const kidIds = Object.values(kidDbIds).filter(Boolean);
+    if (kidIds.length === 0) return;
+
+    // Pull all logs for the week in one query
+    const { data: logs } = await sb.from('log_entries')
+      .select('id, kid_id, minutes, pages, xp_earned, shield_used, log_date')
+      .in('kid_id', kidIds)
+      .gte('log_date', wkStart);
+
+    // Pull books / kid_books for stats
+    const { data: kbs } = await sb.from('kid_books')
+      .select('id, kid_id, status, rating, finished_at, books:book_id(title, author, genres, cover_url)')
+      .in('kid_id', kidIds);
+
+    const weekLogs = logs || [];
+    const allKbs = kbs || [];
+
+    // ---- Family goal ----
+    const familyMin = weekLogs.reduce((s, l) => s + (l.minutes || 0), 0);
+    const goal = 200;
+    const liaMin = weekLogs.filter(l => l.kid_id === kidDbIds.lia).reduce((s, l) => s + (l.minutes || 0), 0);
+    const miaMin = weekLogs.filter(l => l.kid_id === kidDbIds.mia).reduce((s, l) => s + (l.minutes || 0), 0);
+    const liaPct = Math.min(100, Math.round(100 * liaMin / goal));
+    const miaPct = Math.min(100, Math.round(100 * miaMin / goal));
+    setText('dash-fam-num', String(familyMin));
+    setText('dash-fam-lia', 'Olivia ' + liaMin);
+    setText('dash-fam-mia', 'Abigail ' + miaMin);
+    const fb = document.getElementById('dash-fam-bar-lia'); if (fb) fb.style.width = liaPct + '%';
+    const fb2 = document.getElementById('dash-fam-bar-mia'); if (fb2) { fb2.style.left = liaPct + '%'; fb2.style.width = miaPct + '%'; }
+
+    // ---- Per kid ----
+    const paintKid = (slug) => {
+      const kidId = kidDbIds[slug];
+      if (!kidId) return;
+      const myLogs = weekLogs.filter(l => l.kid_id === kidId);
+      const myKbs  = allKbs.filter(k => k.kid_id === kidId);
+      const totalMin = myLogs.reduce((s, l) => s + (l.minutes || 0), 0);
+      const finishedThisWeek = myKbs.filter(k => k.status === 'finished' && k.finished_at && k.finished_at.slice(0,10) >= wkStart).length;
+      const shieldsUsed = myLogs.filter(l => l.shield_used).length;
+      setText('dash-' + slug + '-min', String(totalMin));
+      setText('dash-' + slug + '-books', String(finishedThisWeek));
+      setText('dash-' + slug + '-shields', String(shieldsUsed));
+
+      // Top genres for this kid
+      const counts = {};
+      myKbs.forEach(k => {
+        if (k.status === 'finished' && k.books && Array.isArray(k.books.genres)) {
+          k.books.genres.forEach(g => counts[g] = (counts[g] || 0) + 1);
+        }
+      });
+      const tops = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
+      const gEl = document.getElementById('dash-' + slug + '-genres');
+      if (gEl) gEl.innerHTML = tops.length ? tops.map(g => `<span class="tag">${escapeHtml(g)}</span>`).join('') : '<span class="small" style="color:var(--muted)">No finished books yet</span>';
+
+      // Weekly bars (M/T/W/T/F/S/S — index 0=Sun)
+      const byDow = [0,0,0,0,0,0,0];
+      myLogs.forEach(l => { const d = new Date(l.log_date + 'T00:00:00'); byDow[d.getDay()] += l.minutes || 0; });
+      // Display order Mon-Sun: dow 1..6, 0
+      const order = [1,2,3,4,5,6,0];
+      const maxMin = Math.max(1, ...byDow);
+      const labels = ['S','M','T','W','T','F','S'];
+      const barColor = slug === 'lia' ? 'var(--lia)' : 'var(--mia)';
+      const bars = order.map((dow,i) => {
+        const m = byDow[dow];
+        const h = Math.max(4, Math.round(80 * m / maxMin));
+        const isEmpty = m === 0;
+        return `<div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:${h}%;background:${isEmpty ? 'var(--line)' : barColor}" title="${labels[dow]}: ${m} min"></div><div class="small" style="font-size:9px">${labels[dow]}</div></div>`;
+      }).join('');
+      const wkEl = document.getElementById('dash-' + slug + '-week');
+      if (wkEl) wkEl.innerHTML = bars;
+    };
+    paintKid('lia'); paintKid('mia');
+
+    // ---- Activity feed ----
+    const feed = document.getElementById('dash-feed');
+    if (feed) {
+      const activities = [];
+      // Finished books
+      allKbs.filter(k => k.status === 'finished' && k.finished_at).forEach(k => {
+        const slug = Object.keys(kidDbIds).find(s => kidDbIds[s] === k.kid_id);
+        if (!slug) return;
+        const kid = state.kids[slug];
+        activities.push({
+          ts: new Date(k.finished_at).getTime(),
+          html: `<div class="av av-${slug === 'lia' ? 'lia' : 'mia'} w-8 h-8" style="font-size:12px">${kid.name[0]}</div>
+                 <div class="flex-1 min-w-0"><div class="text-sm"><b>${escapeHtml(kid.name)}</b> finished <b>${escapeHtml(k.books && k.books.title || 'a book')}</b> ${k.rating ? `<span class="stars-sm">${'★'.repeat(k.rating)}${'☆'.repeat(5-k.rating)}</span>` : ''}</div><div class="small">${relativeTime(k.finished_at)}</div></div>`
+        });
+      });
+      // Reading logs
+      (logs || []).forEach(l => {
+        const slug = Object.keys(kidDbIds).find(s => kidDbIds[s] === l.kid_id);
+        if (!slug) return;
+        const kid = state.kids[slug];
+        activities.push({
+          ts: new Date(l.log_date + 'T00:00:00').getTime() + 1, // bump after finish events on same day
+          html: `<div class="av av-${slug === 'lia' ? 'lia' : 'mia'} w-8 h-8" style="font-size:12px">${kid.name[0]}</div>
+                 <div class="flex-1 min-w-0"><div class="text-sm"><b>${escapeHtml(kid.name)}</b> logged ${l.minutes} min ${l.pages ? `· ${l.pages} pages` : ''}</div><div class="small">${relativeTime(l.log_date)}</div></div>`
+        });
+      });
+      activities.sort((a,b) => b.ts - a.ts);
+      const items = activities.slice(0, 10).map(a => `<li class="flex items-center gap-3">${a.html}</li>`).join('');
+      feed.innerHTML = items || '<li class="small" style="color:var(--muted)">No activity yet — log some reading.</li>';
+    }
+  }
+
+  function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+  function relativeTime(iso) {
+    const d = (typeof iso === 'string' && iso.length === 10) ? new Date(iso + 'T12:00:00') : new Date(iso);
+    const diffH = (Date.now() - d.getTime()) / 36e5;
+    if (diffH < 1) return 'Just now';
+    if (diffH < 24) return Math.round(diffH) + 'h ago';
+    const diffD = Math.round(diffH / 24);
+    if (diffD === 1) return 'Yesterday';
+    if (diffD < 7) return diffD + ' days ago';
+    return d.toLocaleDateString();
+  }
 
   // ===== Camera (getUserMedia) + AI book identification =====
   let camStream = null;
@@ -1221,12 +1620,39 @@
         return;
       }
 
+      // Cache for addBook() to persist on confirm
+      lastIdentifiedBook = data;
+
       // Populate confirm screen
       const seriesText = data.series ? (data.series_number ? `${data.series} · #${data.series_number}` : data.series) : '';
       document.getElementById('cf-title').textContent = data.title;
       document.getElementById('cf-author').textContent = data.author ? 'by ' + data.author : '';
       document.getElementById('cf-cover-title').textContent = data.title;
       document.getElementById('cf-cover-author').textContent = data.author || '';
+      // Show real cover art if Google Books found one
+      const coverImg = document.getElementById('cf-cover-img');
+      const coverTitle = document.getElementById('cf-cover-title');
+      const coverAuthor = document.getElementById('cf-cover-author');
+      if (coverImg) {
+        if (data.cover_url) {
+          coverImg.onload = () => {
+            coverImg.style.display = 'block';
+            if (coverTitle) coverTitle.style.display = 'none';
+            if (coverAuthor) coverAuthor.style.display = 'none';
+          };
+          coverImg.onerror = () => {
+            coverImg.style.display = 'none';
+            if (coverTitle) coverTitle.style.display = '';
+            if (coverAuthor) coverAuthor.style.display = '';
+          };
+          coverImg.src = data.cover_url;
+        } else {
+          coverImg.style.display = 'none';
+          coverImg.removeAttribute('src');
+          if (coverTitle) coverTitle.style.display = '';
+          if (coverAuthor) coverAuthor.style.display = '';
+        }
+      }
       const tagsEl = document.getElementById('cf-tags');
       tagsEl.innerHTML = '';
       if(seriesText){
@@ -1275,6 +1701,7 @@
 
   document.addEventListener('DOMContentLoaded',()=>{
     try { paintHome(); } catch(e) { console.warn('paintHome failed:', e); }
+    try { paintWelcome(); } catch(e) { console.warn('paintWelcome failed:', e); }
     try { setupStars(); } catch(e) { console.warn('setupStars failed:', e); }
     try { setupPin();   } catch(e) { console.warn('setupPin failed:', e); }
     initSupabase();
