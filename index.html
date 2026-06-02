@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Reading Log · v4</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       /* Neutrals — warm, calm */
@@ -915,8 +916,20 @@
       </svg>`}
   };
 
-  // ===== Persistent state (localStorage) =====
-  const STORAGE_KEY = 'readinglog:v4';
+  // ===== Supabase config =====
+  // Public anon/publishable key — safe to embed in client code.
+  // Data privacy currently relies on URL being hard to guess.
+  // RLS + parent email login can be layered on later.
+  const SUPABASE_URL = 'https://pytbtuzeeguqgrhszmpr.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Szeto_ZZUnpZipwMv1VE0A_wyo3RMQp';
+  const HOUSEHOLD_ID = '00000000-0000-0000-0000-000000000001';
+  // Map app's internal kid keys to DB slugs
+  const KID_SLUGS = { lia: 'olivia', mia: 'abigail' };
+  let sb = null;             // supabase client (set on init)
+  const kidDbIds = {};       // map app key (lia/mia) -> DB uuid
+
+  // ===== Persistent state (localStorage cache) =====
+  const STORAGE_KEY = 'readinglog:v5';
   const DEFAULT_STATE = {
     activeKid:'lia',
     kids:{
@@ -943,6 +956,59 @@
   }
   window.resetReadingLog = resetState; // dev escape hatch: call from console
   const state = loadState();
+
+  // ===== Supabase wire-up =====
+  async function initSupabase() {
+    if (typeof supabase === 'undefined') { console.warn('supabase-js not loaded'); return; }
+    try {
+      sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { data, error } = await sb.from('kids').select('*').eq('household_id', HOUSEHOLD_ID);
+      if (error) { console.warn('Supabase load failed:', error.message); return; }
+      // Hydrate local state from DB (DB is source of truth)
+      data.forEach(row => {
+        const stateKey = Object.keys(KID_SLUGS).find(k => KID_SLUGS[k] === row.slug);
+        if (!stateKey) return;
+        kidDbIds[stateKey] = row.id;
+        state.kids[stateKey] = {
+          name: row.name,
+          mascot: row.mascot,
+          level: row.level,
+          xp: row.xp,
+          xpMax: row.xp_max,
+          streak: row.streak,
+          shields: row.shields
+        };
+      });
+      saveState();
+      paintHome();
+    } catch(e) { console.warn('Supabase init error:', e); }
+  }
+
+  async function syncKidToDB(stateKey) {
+    if (!sb || !kidDbIds[stateKey]) return;
+    const kid = state.kids[stateKey];
+    const { error } = await sb.from('kids').update({
+      mascot: kid.mascot,
+      level: kid.level,
+      xp: kid.xp,
+      xp_max: kid.xpMax,
+      streak: kid.streak,
+      shields: kid.shields,
+      last_log_date: new Date().toISOString().slice(0, 10)
+    }).eq('id', kidDbIds[stateKey]);
+    if (error) console.warn('Supabase kid sync failed:', error.message);
+  }
+
+  async function insertLogEntryToDB(stateKey, minutes, pages, xpEarned) {
+    if (!sb || !kidDbIds[stateKey]) return;
+    const { error } = await sb.from('log_entries').insert({
+      kid_id: kidDbIds[stateKey],
+      minutes, pages,
+      xp_earned: xpEarned,
+      log_date: new Date().toISOString().slice(0, 10)
+    });
+    if (error) console.warn('Supabase log insert failed:', error.message);
+  }
 
   function go(name){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -984,7 +1050,13 @@
       grid.appendChild(b);
     });
   }
-  function confirmMascot(){ state.kids[state.activeKid].mascot=state.selectedMascot; saveState(); toast(MASCOTS[state.selectedMascot].name+' is your buddy'); go('kid-home'); }
+  function confirmMascot(){
+    state.kids[state.activeKid].mascot=state.selectedMascot;
+    saveState();
+    syncKidToDB(state.activeKid);
+    toast(MASCOTS[state.selectedMascot].name+' is your buddy');
+    go('kid-home');
+  }
 
   function bump(id,d){ const el=document.getElementById(id); el.value=Math.max(0,(parseInt(el.value,10)||0)+d); }
   function setVal(id,v){ document.getElementById(id).value=v; }
@@ -998,6 +1070,9 @@
     kid.streak++;
     state.log.push({ kid: state.activeKid, minutes: min, pages: pg, ts: Date.now() });
     saveState();
+    // Fire-and-forget to Supabase — UI updates immediately either way
+    syncKidToDB(state.activeKid);
+    insertLogEntryToDB(state.activeKid, min, pg, gain);
     document.getElementById('lg-xp').textContent=gain;
     document.getElementById('lg-cur').textContent=kid.xp;
     document.getElementById('lg-max').textContent=kid.xpMax;
@@ -1039,7 +1114,7 @@
     w.appendChild(t); setTimeout(()=>t.remove(),2500);
   }
 
-  document.addEventListener('DOMContentLoaded',()=>{ paintHome(); setupStars(); setupPin(); });
+  document.addEventListener('DOMContentLoaded',()=>{ paintHome(); setupStars(); setupPin(); initSupabase(); });
 </script>
 
 </body>
