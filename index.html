@@ -77,21 +77,40 @@
         box-shadow: var(--shadow-lg), 0 0 0 6px #111, 0 0 0 7px rgba(255,255,255,.05);
       }
     }
-    /* Tablet (iPad): fill the screen, no fake phone bezel, slightly wider content */
+    /* Tablet (iPad portrait): fill the screen, no fake phone bezel, generous single column */
     @media (min-width: 768px) {
       .stage { padding: 0; }
       .phone {
-        max-width: 560px; min-height: 100dvh; height: auto;
+        max-width: 620px; min-height: 100dvh; height: auto;
         border-radius: 0; box-shadow: none;
       }
+      /* Bigger touch targets for tablet */
+      .btn-lg { padding: 18px 22px; font-size: 16.5px; }
+      .btn-xl { padding: 20px 24px; font-size: 17px; }
+      .tabbar { padding: 10px 4px 14px; }
+      .tab { font-size: 11.5px; padding: 8px 0; }
+      .tab svg { width: 24px; height: 24px; }
     }
     /* PWA standalone mode (added to home screen) — always full-bleed, never show bezel */
     @media (display-mode: standalone) {
       .stage { padding: 0; min-height: 100vh; }
       .phone {
-        max-width: 560px; min-height: 100dvh; height: auto;
+        max-width: 620px; min-height: 100dvh; height: auto;
         border-radius: 0; box-shadow: none;
       }
+    }
+    /* iPad landscape: two-column for kid-home top area, wider container */
+    .kid-pair { display: contents; }
+    @media (min-width: 1024px) and (orientation: landscape) {
+      .phone, .phone.wide { max-width: 880px; }
+      .kid-pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 0 4px;
+      }
+      .kid-pair > div { padding-left: 0 !important; padding-right: 0 !important; }
+      .kid-pair > div > * { margin-left: 16px; margin-right: 16px; }
     }
     .phone.wide { max-width: 1000px; height: auto; min-height: 100dvh; }
     @media (min-width: 768px) {
@@ -319,6 +338,7 @@
         </div>
       </div>
 
+      <div class="kid-pair">
       <!-- Mascot card -->
       <div class="px-5 pt-2">
         <div class="card p-3 flex items-center gap-3">
@@ -362,6 +382,7 @@
           </div>
         </div>
       </div>
+      </div><!-- /.kid-pair -->
 
       <!-- Quick log -->
       <div class="px-5 pt-3">
@@ -604,7 +625,7 @@
         <button class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)">Reading 2</button>
         <button class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)">Want 5</button>
       </div>
-      <div class="px-6 pt-4 pb-6 grid grid-cols-3 gap-3">
+      <div class="px-6 pt-4 pb-6 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         <div onclick="go('book-detail')"><div class="cover c5"><div class="cn">Pilkey</div><div class="ct">Dog Man</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
         <div onclick="go('book-detail')"><div class="cover c4"><div class="cn">Sutherland</div><div class="ct">Wings of Fire #3</div></div><div class="stars-sm mt-1.5">★★★★☆</div></div>
         <div onclick="go('book-detail')"><div class="cover c3"><div class="cn">Osborne</div><div class="ct">Magic Tree #28</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
@@ -1200,27 +1221,4 @@
       },180);
     });
   }
-  function paintPin(){ for(let i=0;i<4;i++) document.getElementById('pd-'+i).classList.toggle('filled',i<state.pin.length); }
-
-  function toast(msg){
-    const w=document.getElementById('toast-wrap');
-    const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
-    w.appendChild(t); setTimeout(()=>t.remove(),2500);
-  }
-
-  document.addEventListener('DOMContentLoaded',()=>{
-    try { paintHome(); } catch(e) { console.warn('paintHome failed:', e); }
-    try { setupStars(); } catch(e) { console.warn('setupStars failed:', e); }
-    try { setupPin();   } catch(e) { console.warn('setupPin failed:', e); }
-    // Camera input
-    const camInput = document.getElementById('cam-input');
-    if(camInput) {
-      camInput.addEventListener('change', e => {
-        const f = e.target.files && e.target.files[0];
-        if(f) handleCameraCapture(f);
-        e.target.value = ''; // allow re-selecting same file
-      });
-    }
-    initSupabase();
-  });
-</scr
+  function paintPin(){ for(let i=0;i<4;i++) document.getElementById(
