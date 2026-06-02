@@ -301,7 +301,7 @@
               <div class="h2" id="h-name">Pip</div>
               <div class="small num"><span id="h-xp">340</span>/<span id="h-xpmax">500</span></div>
             </div>
-            <div class="small mt-0.5" id="h-tag">Level <span class="num" id="h-level">7</span> · Bookish & loyal</div>
+            <div class="small mt-0.5">Level <span class="num" id="h-level">7</span> · <span id="h-tag">Bookish & loyal</span></div>
             <div class="track mt-2"><div class="fill" id="h-xpbar" style="width:68%"></div></div>
           </div>
         </div>
@@ -1114,7 +1114,12 @@
     w.appendChild(t); setTimeout(()=>t.remove(),2500);
   }
 
-  document.addEventListener('DOMContentLoaded',()=>{ paintHome(); setupStars(); setupPin(); initSupabase(); });
+  document.addEventListener('DOMContentLoaded',()=>{
+    try { paintHome(); } catch(e) { console.warn('paintHome failed:', e); }
+    try { setupStars(); } catch(e) { console.warn('setupStars failed:', e); }
+    try { setupPin();   } catch(e) { console.warn('setupPin failed:', e); }
+    initSupabase();
+  });
 </script>
 
 </body>
