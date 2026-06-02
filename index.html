@@ -552,19 +552,18 @@
       <p class="px-6 small">Point at the cover.</p>
       <div class="px-5 pt-4">
         <div class="viewfinder">
+          <video id="cam-video" autoplay muted playsinline webkit-playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0A0A0A"></video>
           <div class="vfc vftl"></div><div class="vfc vftr"></div><div class="vfc vfbl"></div><div class="vfc vfbr"></div>
-          <div class="text-center" style="color:rgba(255,255,255,.5)">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
-            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-top:8px">Camera</div>
+          <div id="cam-msg" class="text-center" style="position:relative;z-index:2;color:rgba(255,255,255,.85);padding:24px;max-width:80%;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto opacity-80"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
+            <div style="font-size:12px;font-weight:600;margin-top:10px">Starting camera…</div>
           </div>
         </div>
       </div>
       <div class="px-5 pt-5 flex items-center justify-center">
-        <label class="shutter" style="cursor:pointer;">
-          <div></div>
-          <input type="file" id="cam-input" accept="image/*" capture="environment" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
-        </label>
+        <button onclick="captureFromVideo()" class="shutter"><div></div></button>
       </div>
+      <canvas id="cam-canvas" style="display:none"></canvas>
       <div class="px-5 pt-6 pb-6 mt-auto text-center">
         <button class="small font-medium" style="color:var(--accent)" onclick="go('confirm')">Type the title manually</button>
       </div>
@@ -1070,6 +1069,7 @@
     document.getElementById('app').classList.toggle('wide', name==='dashboard');
     if(name==='mascot-picker') renderMascotGrid();
     if(name==='kid-home') paintHome();
+    if(name==='snap') startCamera(); else stopCamera();
     window.scrollTo(0,0);
   }
   function selectKid(k){ state.activeKid=k; state.selectedMascot=state.kids[k].mascot; saveState(); go('kid-home'); }
@@ -1145,22 +1145,66 @@
   function submitReview(){ toast('Review saved · +50 XP'); setTimeout(()=>go('kid-home'),600); }
   function addBook(s){ toast(s==='reading'?'Added to reading':'Saved for later'); setTimeout(()=>go('kid-home'),600); }
 
-  // ===== Camera + AI book identification =====
-  function openCamera(){
-    const inp = document.getElementById('cam-input');
-    if(inp) inp.click();
+  // ===== Camera (getUserMedia) + AI book identification =====
+  let camStream = null;
+
+  async function startCamera() {
+    const video = document.getElementById('cam-video');
+    const msg = document.getElementById('cam-msg');
+    if (!video) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      if (msg) { msg.innerHTML = '<div style="font-size:13px;font-weight:600">Camera not supported</div><div style="font-size:11px;margin-top:6px">Use "Type the title manually" below.</div>'; msg.style.display = 'block'; }
+      return;
+    }
+    try {
+      if (camStream) stopCamera();
+      if (msg) { msg.style.display = 'block'; msg.innerHTML = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto opacity-80"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg><div style="font-size:12px;font-weight:600;margin-top:10px">Starting camera...</div>'; }
+      camStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 960 } },
+        audio: false
+      });
+      video.srcObject = camStream;
+      try { await video.play(); } catch (e) {}
+      if (msg) msg.style.display = 'none';
+    } catch (e) {
+      console.warn('Camera failed:', e && e.name, e && e.message);
+      if (msg) {
+        msg.style.display = 'block';
+        const isPerm = e && (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError');
+        msg.innerHTML = isPerm
+          ? '<div style="font-size:13px;font-weight:600">Camera permission needed</div><div style="font-size:11px;margin-top:6px;line-height:1.4">Open iPad <b>Settings &gt; Safari &gt; Camera</b> and set to <b>Allow</b>, then come back.</div>'
+          : '<div style="font-size:13px;font-weight:600">Camera unavailable</div><div style="font-size:11px;margin-top:6px;line-height:1.4">Type the title manually below.</div>';
+      }
+    }
   }
 
-  async function handleCameraCapture(file){
-    if(!file) return;
-    // Read file as data URL
-    const dataUrl = await new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
+  function stopCamera() {
+    const video = document.getElementById('cam-video');
+    if (camStream) {
+      camStream.getTracks().forEach(t => { try { t.stop(); } catch(e){} });
+      camStream = null;
+    }
+    if (video) { try { video.srcObject = null; } catch(e){} }
+  }
 
+  function captureFromVideo() {
+    const video = document.getElementById('cam-video');
+    const canvas = document.getElementById('cam-canvas');
+    if (!video || !canvas || !video.videoWidth) { toast('Camera not ready'); return; }
+    const maxW = 1024;
+    const scale = Math.min(1, maxW / video.videoWidth);
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    let dataUrl;
+    try { dataUrl = canvas.toDataURL('image/jpeg', 0.85); }
+    catch (e) { toast('Could not capture image'); return; }
+    stopCamera();
+    handleCapturedImage(dataUrl);
+  }
+
+  async function handleCapturedImage(dataUrl) {
     go('identifying');
 
     try {
@@ -1233,17 +1277,12 @@
     try { paintHome(); } catch(e) { console.warn('paintHome failed:', e); }
     try { setupStars(); } catch(e) { console.warn('setupStars failed:', e); }
     try { setupPin();   } catch(e) { console.warn('setupPin failed:', e); }
-    // Camera input
-    const camInput = document.getElementById('cam-input');
-    if(camInput) {
-      camInput.addEventListener('change', e => {
-        const f = e.target.files && e.target.files[0];
-        if(f) handleCameraCapture(f);
-        e.target.value = ''; // allow re-selecting same file
-      });
-    }
     initSupabase();
   });
+
+  // Release the camera if the user navigates away or backgrounds the tab
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopCamera(); });
+  window.addEventListener('pagehide', () => stopCamera());
 </script>
 
 </body>
