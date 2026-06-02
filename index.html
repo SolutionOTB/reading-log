@@ -61,24 +61,41 @@
     }
 
     .stage { min-height: 100dvh; display: flex; align-items: center; justify-content: center; }
-    @media (min-width: 480px) { .stage { padding: 32px; } }
 
     .phone {
-      width: 100%; max-width: 420px; min-height: 100dvh;
+      width: 100%; max-width: 460px; min-height: 100dvh;
       background: var(--bg);
       position: relative; overflow: hidden;
       display: flex; flex-direction: column;
     }
-    @media (min-width: 480px) {
+    /* Desktop browser preview only: show a phone-shaped bezel for design review */
+    @media (min-width: 480px) and (max-width: 767px) and (pointer: fine) {
+      .stage { padding: 32px; }
       .phone {
         max-width: 380px; min-height: 780px; height: 780px;
         border-radius: 40px;
         box-shadow: var(--shadow-lg), 0 0 0 6px #111, 0 0 0 7px rgba(255,255,255,.05);
       }
     }
+    /* Tablet (iPad): fill the screen, no fake phone bezel, slightly wider content */
+    @media (min-width: 768px) {
+      .stage { padding: 0; }
+      .phone {
+        max-width: 560px; min-height: 100dvh; height: auto;
+        border-radius: 0; box-shadow: none;
+      }
+    }
+    /* PWA standalone mode (added to home screen) — always full-bleed, never show bezel */
+    @media (display-mode: standalone) {
+      .stage { padding: 0; min-height: 100vh; }
+      .phone {
+        max-width: 560px; min-height: 100dvh; height: auto;
+        border-radius: 0; box-shadow: none;
+      }
+    }
     .phone.wide { max-width: 1000px; height: auto; min-height: 100dvh; }
     @media (min-width: 768px) {
-      .phone.wide { min-height: 720px; border-radius: 18px; box-shadow: var(--shadow-lg), 0 0 0 1px var(--line); }
+      .phone.wide { min-height: 720px; border-radius: 0; box-shadow: none; max-width: 920px; }
     }
 
     .screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
@@ -522,10 +539,11 @@
         </div>
       </div>
       <div class="px-5 pt-5 flex items-center justify-center">
-        <button onclick="go('identifying')" class="shutter"><div></div></button>
+        <input type="file" id="cam-input" accept="image/*" capture="environment" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <button onclick="openCamera()" class="shutter"><div></div></button>
       </div>
       <div class="px-5 pt-6 pb-6 mt-auto text-center">
-        <button class="small font-medium" style="color:var(--accent)" onclick="go('confirm')">Can't snap? Search by title</button>
+        <button class="small font-medium" style="color:var(--accent)" onclick="go('confirm')">Type the title manually</button>
       </div>
     </section>
 
@@ -545,11 +563,11 @@
         <h1 class="h1" style="font-size:20px">Is this it?</h1>
       </div>
       <div class="px-6 pt-4 flex gap-4 items-end">
-        <div class="cover c1" style="width:96px"><div class="cn">Peter Brown</div><div class="ct">The Wild Robot</div></div>
+        <div class="cover c1" style="width:96px" id="cf-cover"><div class="cn" id="cf-cover-author">Peter Brown</div><div class="ct" id="cf-cover-title">The Wild Robot</div></div>
         <div class="flex-1 pb-1">
-          <div class="h2 leading-tight">The Wild Robot</div>
-          <div class="small">Peter Brown</div>
-          <div class="mt-2 flex gap-1.5"><span class="tag">Animal</span><span class="tag">Fantasy</span></div>
+          <div class="h2 leading-tight" id="cf-title">The Wild Robot</div>
+          <div class="small" id="cf-author">Peter Brown</div>
+          <div class="mt-2 flex gap-1.5" id="cf-tags"><span class="tag">Animal</span><span class="tag">Fantasy</span></div>
         </div>
       </div>
       <div class="px-5 pt-7">
@@ -1104,6 +1122,68 @@
   function submitReview(){ toast('Review saved · +50 XP'); setTimeout(()=>go('kid-home'),600); }
   function addBook(s){ toast(s==='reading'?'Added to reading':'Saved for later'); setTimeout(()=>go('kid-home'),600); }
 
+  // ===== Camera + AI book identification =====
+  function openCamera(){
+    const inp = document.getElementById('cam-input');
+    if(inp) inp.click();
+  }
+
+  async function handleCameraCapture(file){
+    if(!file) return;
+    // Read file as data URL
+    const dataUrl = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+
+    go('identifying');
+
+    try {
+      const resp = await fetch('/api/identify-book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: dataUrl })
+      });
+      const data = await resp.json();
+
+      if(!resp.ok || data.error || !data.title){
+        toast(data?.error ? 'Identify failed: ' + data.error.slice(0,40) : 'Could not identify — try again');
+        go('snap');
+        return;
+      }
+
+      // Populate confirm screen
+      const seriesText = data.series ? (data.series_number ? `${data.series} · #${data.series_number}` : data.series) : '';
+      document.getElementById('cf-title').textContent = data.title;
+      document.getElementById('cf-author').textContent = data.author ? 'by ' + data.author : '';
+      document.getElementById('cf-cover-title').textContent = data.title;
+      document.getElementById('cf-cover-author').textContent = data.author || '';
+      const tagsEl = document.getElementById('cf-tags');
+      tagsEl.innerHTML = '';
+      if(seriesText){
+        const t = document.createElement('span');
+        t.className = 'tag';
+        t.textContent = seriesText;
+        tagsEl.appendChild(t);
+      }
+      if(data.confidence === 'low'){
+        const c = document.createElement('span');
+        c.className = 'tag';
+        c.style.background = '#FEF3C7';
+        c.style.color = '#92400E';
+        c.textContent = 'Not sure — check title';
+        tagsEl.appendChild(c);
+      }
+      go('confirm');
+    } catch(err) {
+      console.error('Camera identify error:', err);
+      toast('Network error — try again');
+      go('snap');
+    }
+  }
+
   function setupPin(){
     const pad=document.getElementById('pin-pad'); if(!pad)return;
     pad.addEventListener('click',e=>{
@@ -1130,6 +1210,15 @@
     try { paintHome(); } catch(e) { console.warn('paintHome failed:', e); }
     try { setupStars(); } catch(e) { console.warn('setupStars failed:', e); }
     try { setupPin();   } catch(e) { console.warn('setupPin failed:', e); }
+    // Camera input
+    const camInput = document.getElementById('cam-input');
+    if(camInput) {
+      camInput.addEventListener('change', e => {
+        const f = e.target.files && e.target.files[0];
+        if(f) handleCameraCapture(f);
+        e.target.value = ''; // allow re-selecting same file
+      });
+    }
     initSupabase();
   });
 </script>
