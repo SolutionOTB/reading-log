@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Reading Log · v4</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      /* Neutrals — warm, calm */
+      --ink:     #1a1a18;
+      --ink-2:   #57534e;
+      --muted:   #8a857e;
+      --line:    #ECEAE5;
+      --line-2:  #F6F4F0;
+      --bg:      #FBFAF8;
+      --surface: #FFFFFF;
+
+      /* Single accent */
+      --accent:    #14776A;   /* calm teal-green */
+      --accent-d:  #0C5046;
+      --accent-l:  #E7F1EF;
+
+      /* Kid identity — used ONLY on avatars + their own progress segment */
+      --lia:  #6366F1;
+      --lia-l:#EEF0FE;
+      --mia:  #DB2777;
+      --mia-l:#FCE9F2;
+
+      /* Functional only */
+      --warn:  #C2410C;
+      --warn-l:#FBEDE6;
+
+      --r-sm: 10px;
+      --r-md: 14px;
+      --r-lg: 20px;
+      --shadow: 0 1px 2px rgba(26,26,24,.05);
+      --shadow-lg: 0 8px 30px -12px rgba(26,26,24,.14);
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: ui-sans-serif, "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .stage { min-height: 100dvh; display: flex; align-items: center; justify-content: center; }
+    @media (min-width: 480px) { .stage { padding: 32px; } }
+
+    .phone {
+      width: 100%; max-width: 420px; min-height: 100dvh;
+      background: var(--bg);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    @media (min-width: 480px) {
+      .phone {
+        max-width: 380px; min-height: 780px; height: 780px;
+        border-radius: 40px;
+        box-shadow: var(--shadow-lg), 0 0 0 6px #111, 0 0 0 7px rgba(255,255,255,.05);
+      }
+    }
+    .phone.wide { max-width: 1000px; height: auto; min-height: 100dvh; }
+    @media (min-width: 768px) {
+      .phone.wide { min-height: 720px; border-radius: 18px; box-shadow: var(--shadow-lg), 0 0 0 1px var(--line); }
+    }
+
+    .screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+    .screen.active { display: flex; }
+
+    /* Type */
+    .h1 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+    .h2 { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+    .h3 { font-size: 13.5px; font-weight: 600; }
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+    .body { font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+    .small { font-size: 12.5px; color: var(--muted); }
+    .num { font-variant-numeric: tabular-nums; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-weight: 600; font-size: 15px;
+      padding: 13px 18px; border-radius: var(--r-md);
+      border: 1px solid transparent;
+      transition: transform .08s, background .12s, color .12s, border-color .12s;
+      cursor: pointer;
+    }
+    button { border: none; background: none; cursor: pointer; font: inherit; color: inherit; padding: 0; }
+    .btn:active { transform: scale(.985); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-d); }
+    .btn-secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+    .btn-secondary:hover { background: var(--line-2); }
+    .btn-ghost { background: transparent; color: var(--ink-2); }
+    .btn-ghost:hover { background: var(--line-2); }
+    .btn-block { width: 100%; }
+    .btn-lg { padding: 16px 20px; font-size: 16px; border-radius: var(--r-md); }
+    .btn-xl { padding: 15px 20px; font-size: 15px; border-radius: var(--r-md); }
+    .shutter { width: 64px; height: 64px; border-radius: 50%; background: #fff; border: 4px solid var(--ink); display: flex; align-items: center; justify-content: center; }
+    .shutter > div { width: 46px; height: 46px; border-radius: 50%; background: var(--ink); }
+
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 12px; color: var(--ink-2); background: transparent;
+    }
+    .icon-btn:hover { background: var(--line-2); }
+
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+
+    /* Chips — single neutral style; meaning via small icon + text, not loud color */
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12.5px; font-weight: 600; padding: 5px 10px;
+      border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2);
+    }
+    .chip svg { color: var(--muted); }
+    .tag {
+      display: inline-flex; align-items: center;
+      font-size: 12px; font-weight: 500; padding: 3px 9px; border-radius: 999px;
+      background: var(--line-2); color: var(--ink-2);
+    }
+
+    /* Progress — flat, single accent */
+    .track { background: var(--line); border-radius: 999px; overflow: hidden; height: 7px; }
+    .fill  { height: 100%; background: var(--accent); border-radius: 999px; transition: width .6s cubic-bezier(.22,1,.36,1); }
+
+    /* Animations — restrained */
+    .fade-in { animation: fade-in .24s ease both; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+    .pop-in { animation: pop-in .28s cubic-bezier(.22,1.1,.4,1) both; }
+    @keyframes pop-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .float { animation: float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+    .toast-wrap { position: absolute; left: 0; right: 0; bottom: 20px; pointer-events: none; z-index: 60; display: flex; justify-content: center; }
+    .toast { padding: 11px 16px; border-radius: 12px; background: var(--ink); color: #fff; font-weight: 500; font-size: 14px; box-shadow: var(--shadow-lg); animation: toast 2.4s ease forwards; }
+    @keyframes toast { 0% { opacity: 0; transform: translateY(14px); } 12%,88% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-6px); } }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    input:focus, button:focus, textarea:focus { outline: none; }
+
+    /* ===== FLAT BOOK COVERS — muted, clean, no serif clutter ===== */
+    .cover {
+      position: relative; aspect-ratio: 2/3; border-radius: 4px 7px 7px 4px;
+      overflow: hidden; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 9px 9px 11px;
+      color: #fff;
+    }
+    .cover::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: rgba(0,0,0,.14); }
+    .cover .ct { font-size: 11px; font-weight: 600; line-height: 1.15; letter-spacing: -.01em; }
+    .cover .cn { font-size: 8px; font-weight: 500; opacity: .8; margin-bottom: 3px; }
+    /* Muted, harmonious cover palette */
+    .c1 { background: #3C5A6E; } .c2 { background: #7A5A48; } .c3 { background: #5A6E52; }
+    .c4 { background: #6E5276; } .c5 { background: #A6603E; } .c6 { background: #45626B; }
+    .c7 { background: #8A5168; } .c8 { background: #4C5468; } .c9 { background: #6B7250; }
+
+    /* Star rating */
+    .star { font-size: 30px; line-height: 1; color: var(--line); cursor: pointer; transition: transform .1s; user-select: none; }
+    .star.on { color: #E0A106; }
+    .star:active { transform: scale(1.12); }
+    .stars-sm { color: #E0A106; font-size: 11px; letter-spacing: 1px; }
+
+    /* Chat */
+    .bubble-bot { background: var(--surface); border: 1px solid var(--line); border-radius: 16px 16px 16px 5px; padding: 11px 14px; max-width: 84%; align-self: flex-start; box-shadow: var(--shadow); }
+    .bubble-user { background: var(--accent); color: #fff; border-radius: 16px 16px 5px 16px; padding: 11px 14px; max-width: 84%; align-self: flex-end; }
+    .sug { background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); padding: 7px 13px; border-radius: 999px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+    .sug:active { background: var(--line-2); }
+
+    /* Badges */
+    .badge { aspect-ratio: 1; border-radius: var(--r-md); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 6px; text-align: center; font-size: 11px; font-weight: 500; border: 1px solid var(--line); transition: transform .12s; }
+    .badge:active { transform: scale(.96); }
+    .badge.locked { background: var(--line-2); color: var(--muted); }
+    .badge.locked .bi { opacity: .3; }
+    .badge.unlocked { background: var(--accent-l); color: var(--accent-d); border-color: #CDE5E0; }
+    .bi { width: 24px; height: 24px; margin-bottom: 5px; display: flex; }
+
+    /* Bingo */
+    .bingo { aspect-ratio: 1; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; padding: 3px; text-align: center; font-size: 9.5px; font-weight: 500; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+    .bingo.done { background: var(--accent-l); color: var(--accent-d); border-color: #CDE5E0; }
+
+    /* Tab bar */
+    .tabbar {
+      position: sticky; bottom: 0;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      padding: 8px 4px 12px; z-index: 30;
+    }
+    .tab { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--muted); font-size: 10.5px; font-weight: 500; padding: 4px 0; }
+    .tab.active { color: var(--accent); }
+    .tab svg { width: 21px; height: 21px; }
+
+    /* Viewfinder */
+    .viewfinder { position: relative; aspect-ratio: 3/4; width: 100%; background: #0A0A0A; border-radius: var(--r-lg); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .vfc { position: absolute; width: 26px; height: 26px; border: 2.5px solid rgba(255,255,255,.85); }
+    .vftl { top: 18px; left: 18px; border-right: 0; border-bottom: 0; border-top-left-radius: 7px; }
+    .vftr { top: 18px; right: 18px; border-left: 0; border-bottom: 0; border-top-right-radius: 7px; }
+    .vfbl { bottom: 18px; left: 18px; border-right: 0; border-top: 0; border-bottom-left-radius: 7px; }
+    .vfbr { bottom: 18px; right: 18px; border-left: 0; border-top: 0; border-bottom-right-radius: 7px; }
+
+    /* PIN */
+    .pin-dot { width: 12px; height: 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); transition: all .12s; }
+    .pin-dot.filled { background: var(--accent); border-color: var(--accent); }
+    .pad { font-size: 23px; font-weight: 400; color: var(--ink); background: var(--surface); border-radius: var(--r-md); padding: 15px 0; border: 1px solid var(--line); transition: background .12s, transform .08s; }
+    .pad:active { background: var(--line-2); transform: scale(.97); }
+
+    /* Avatar */
+    .av { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; font-weight: 600; color: #fff; }
+    .av-lia { background: var(--lia); }
+    .av-mia { background: var(--mia); }
+
+    /* Co-op bar — flat, two kid colors + accent goal */
+    .coop { position: relative; height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+    .coop .s-lia { position: absolute; left: 0; top: 0; bottom: 0; background: var(--lia); }
+    .coop .s-mia { position: absolute; top: 0; bottom: 0; background: var(--mia); }
+
+    /* Mascot token (soft circular bg behind flat mascot) */
+    .token { border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+    /* Book strip */
+    .strip { display: flex; flex-wrap: nowrap; gap: 12px; padding: 2px 22px 4px; overflow-x: auto; }
+    .strip::-webkit-scrollbar { display: none; }
+    .strip-item { flex: 0 0 78px; cursor: pointer; }
+    .strip-item .cover { width: 78px; }
+
+    @media (min-width: 768px) {
+      .dash { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .dash > .full { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="stage">
+  <div id="app" class="phone">
+
+    <!-- ============ WELCOME ============ -->
+    <section class="screen active" data-screen="welcome">
+      <div class="flex-1 flex flex-col px-6 pt-12 pb-6">
+        <div class="eyebrow">Reading Log</div>
+        <h1 class="h1 mt-1.5">Who's reading today?</h1>
+
+        <div class="mt-6 space-y-2.5">
+          <button class="card w-full p-4 flex items-center gap-4 pop-in text-left" onclick="selectKid('lia')">
+            <div class="av av-lia w-13 h-13" style="width:52px;height:52px;font-size:20px;">O</div>
+            <div class="flex-1">
+              <div class="h2">Olivia</div>
+              <div class="small num">Level 7 · 12-day streak</div>
+            </div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+          <button class="card w-full p-4 flex items-center gap-4 pop-in text-left" onclick="selectKid('mia')" style="animation-delay:70ms">
+            <div class="av av-mia" style="width:52px;height:52px;font-size:20px;">A</div>
+            <div class="flex-1">
+              <div class="h2">Abigail</div>
+              <div class="small num">Level 4 · 5-day streak</div>
+            </div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+
+        <div class="mt-auto pt-8">
+          <button class="btn btn-ghost btn-block" onclick="go('parent-gate')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            Parent mode
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ KID HOME ============ -->
+    <section class="screen" data-screen="kid-home">
+      <div class="px-5 pt-5 pb-1 flex items-center justify-between">
+        <button onclick="go('welcome')" class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="flex items-center gap-2">
+          <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5z"/></svg><span class="num" id="h-shields">2</span></span>
+          <span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg><span class="num" id="h-streak">12</span></span>
+        </div>
+      </div>
+
+      <!-- Mascot card -->
+      <div class="px-5 pt-2">
+        <div class="card p-3 flex items-center gap-3">
+          <div class="token shrink-0 float" id="h-token" style="width:72px;height:72px;">
+            <div id="h-mascot" style="width:58px;height:58px;"></div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-baseline justify-between gap-2">
+              <div class="h2" id="h-name">Pip</div>
+              <div class="small num"><span id="h-xp">340</span>/<span id="h-xpmax">500</span></div>
+            </div>
+            <div class="small mt-0.5" id="h-tag">Level <span class="num" id="h-level">7</span> · Bookish & loyal</div>
+            <div class="track mt-2"><div class="fill" id="h-xpbar" style="width:68%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Co-op -->
+      <div class="px-5 pt-2">
+        <div class="card p-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="flex">
+                <div class="av av-lia ring-2 ring-white" style="width:26px;height:26px;font-size:11px">O</div>
+                <div class="av av-mia ring-2 ring-white" style="width:26px;height:26px;font-size:11px;margin-left:-8px">A</div>
+              </div>
+              <div class="h3">Family reading goal</div>
+            </div>
+            <div class="font-semibold num text-sm">142<span style="color:var(--muted);font-weight:400"> / 200</span></div>
+          </div>
+          <div class="coop mt-2.5" style="height:8px">
+            <div class="s-lia" style="width:47%"></div>
+            <div class="s-mia" style="left:47%;width:24%"></div>
+          </div>
+          <div class="flex items-center justify-between mt-1.5 small">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--lia)"></span>Olivia 94</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--mia)"></span>Abigail 48</span>
+            </div>
+            <span>3d left</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick log -->
+      <div class="px-5 pt-3">
+        <button class="btn btn-primary btn-block btn-lg" onclick="go('quick-log')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Log today's reading
+        </button>
+        <div class="small text-center mt-1.5">15 minutes or 20 pages keeps your streak</div>
+      </div>
+
+      <!-- Books -->
+      <div class="px-6 pt-4 pb-2 flex items-center justify-between">
+        <h2 class="h2">My books</h2>
+        <button class="small font-medium" style="color:var(--accent)" onclick="go('library')">All</button>
+      </div>
+      <div class="strip no-scrollbar">
+        <div class="strip-item" onclick="go('book-detail')">
+          <div class="cover c1"><div class="cn">Peter Brown</div><div class="ct">The Wild Robot</div></div>
+          <div class="track mt-2" style="height:4px"><div class="fill" style="width:55%"></div></div>
+          <div class="small mt-1 num" style="font-size:11px">p.132 / 240</div>
+        </div>
+        <div class="strip-item" onclick="go('book-detail')">
+          <div class="cover c4"><div class="cn">T.T. Sutherland</div><div class="ct">Wings of Fire #4</div></div>
+          <div class="track mt-2" style="height:4px"><div class="fill" style="width:20%"></div></div>
+          <div class="small mt-1 num" style="font-size:11px">p.58 / 280</div>
+        </div>
+        <button class="strip-item flex flex-col items-center justify-center" onclick="go('snap')" style="border:1.5px dashed var(--line);border-radius:8px;color:var(--muted)">
+          <div class="aspect-[2/3] w-full flex flex-col items-center justify-center gap-1.5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            <span style="font-size:11px;font-weight:500">Add</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Recently finished -->
+      <div class="px-6 pt-3 pb-2"><h3 class="h3">Recently finished</h3></div>
+      <div class="px-6 pb-4 no-scrollbar" style="display:flex;flex-wrap:nowrap;gap:10px;overflow-x:auto">
+        <div style="flex:0 0 46px">
+          <div class="cover c5" style="padding:5px"><div class="ct" style="font-size:8px">Dog Man</div></div>
+          <div class="stars-sm mt-1" style="font-size:9px">★★★★★</div>
+        </div>
+        <div style="flex:0 0 46px">
+          <div class="cover c3" style="padding:5px"><div class="ct" style="font-size:8px">Magic Tree</div></div>
+          <div class="stars-sm mt-1" style="font-size:9px">★★★★★</div>
+        </div>
+        <div style="flex:0 0 46px">
+          <div class="cover c2" style="padding:5px"><div class="ct" style="font-size:8px">Despereaux</div></div>
+          <div class="stars-sm mt-1" style="font-size:9px">★★★★☆</div>
+        </div>
+        <div style="flex:0 0 46px">
+          <div class="cover c6" style="padding:5px"><div class="ct" style="font-size:8px">Pax</div></div>
+          <div class="stars-sm mt-1" style="font-size:9px">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="tabbar">
+        <button class="tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>Home</button>
+        <button class="tab" onclick="go('library')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h7M8 11h7"/></svg>Books</button>
+        <button class="tab" onclick="go('badges')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0z"/><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3"/></svg>Badges</button>
+        <button class="tab" onclick="go('chat')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 1 1-3.6-6.7L21 4l-1 4.4A8 8 0 0 1 21 12z"/></svg>Ask</button>
+        <button class="tab" onclick="go('mascot-picker')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M5 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>Buddy</button>
+      </div>
+    </section>
+
+    <!-- ============ QUICK LOG ============ -->
+    <section class="screen" data-screen="quick-log">
+      <div class="px-5 pt-5 pb-2 flex items-center gap-2">
+        <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <h1 class="h1" style="font-size:20px">Today's reading</h1>
+      </div>
+
+      <div class="px-5 pt-4 space-y-2.5">
+        <div class="card p-4">
+          <div class="eyebrow">Minutes</div>
+          <div class="mt-2 flex items-center gap-3">
+            <button class="icon-btn" style="background:var(--line-2)" onclick="bump('log-min',-5)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
+            <input id="log-min" type="number" value="20" class="flex-1 text-center font-semibold num bg-transparent" style="font-size:32px">
+            <button class="icon-btn" style="background:var(--line-2)" onclick="bump('log-min',5)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <div class="flex gap-2 mt-2">
+            <button class="sug" onclick="setVal('log-min',15)">15</button>
+            <button class="sug" onclick="setVal('log-min',20)">20</button>
+            <button class="sug" onclick="setVal('log-min',30)">30</button>
+            <button class="sug" onclick="setVal('log-min',45)">45</button>
+          </div>
+        </div>
+
+        <div class="card p-4">
+          <div class="flex items-center justify-between">
+            <div class="eyebrow">Pages</div>
+            <div class="small">Optional</div>
+          </div>
+          <div class="mt-2 flex items-center gap-3">
+            <button class="icon-btn" style="background:var(--line-2)" onclick="bump('log-pg',-5)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg></button>
+            <input id="log-pg" type="number" value="0" class="flex-1 text-center font-semibold num bg-transparent" style="font-size:32px;color:var(--muted)">
+            <button class="icon-btn" style="background:var(--line-2)" onclick="bump('log-pg',5)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+        </div>
+
+        <div class="card p-4">
+          <div class="eyebrow mb-2">Which book?</div>
+          <div class="flex gap-2 overflow-x-auto no-scrollbar">
+            <button class="sug" style="background:var(--accent-l);color:var(--accent-d);border-color:#CDE5E0">The Wild Robot</button>
+            <button class="sug">Wings of Fire #4</button>
+            <button class="sug">Just reading</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 pt-4 pb-5 mt-auto">
+        <button class="btn btn-primary btn-block btn-lg" onclick="logReading()">Log it</button>
+      </div>
+    </section>
+
+    <!-- ============ LOGGED ============ -->
+    <section class="screen" data-screen="logged">
+      <div class="flex-1 flex flex-col items-center justify-center px-7 text-center" id="logged-stage">
+        <div class="token pop-in" style="width:76px;height:76px;background:var(--accent-l)">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <div class="h1 mt-5" style="font-size:24px">Logged</div>
+        <div class="body mt-1">You earned <span class="font-semibold num" style="color:var(--accent)">+<span id="lg-xp">28</span> XP</span></div>
+
+        <div class="card w-full max-w-xs p-4 mt-6 pop-in" style="animation-delay:.1s">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-medium">Level <span class="num" id="lg-level">7</span></span>
+            <span class="small num"><span id="lg-cur">368</span> / <span id="lg-max">500</span></span>
+          </div>
+          <div class="track"><div class="fill" id="lg-bar" style="width:73%"></div></div>
+        </div>
+
+        <div class="mt-4 chip pop-in" style="animation-delay:.18s">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg>
+          <span class="num">13-day streak</span>
+        </div>
+
+        <div class="mt-6 w-full max-w-xs pop-in" style="animation-delay:.26s">
+          <div class="small mb-1.5">Family goal · 162 / 200 min</div>
+          <div class="coop"><div class="s-lia" style="width:51%"></div><div class="s-mia" style="left:51%;width:24%"></div></div>
+        </div>
+      </div>
+      <div class="px-5 pb-6 space-y-2">
+        <button class="btn btn-primary btn-block btn-lg" onclick="go('kid-home')">Done</button>
+        <button class="btn btn-ghost btn-block" onclick="go('book-detail')">I finished a book</button>
+      </div>
+    </section>
+
+    <!-- ============ MASCOT PICKER ============ -->
+    <section class="screen" data-screen="mascot-picker">
+      <div class="px-5 pt-5 pb-1 flex items-center gap-2">
+        <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <h1 class="h1" style="font-size:20px">Pick your buddy</h1>
+      </div>
+      <p class="px-6 small">They grow as you read.</p>
+      <div class="px-5 pt-5 grid grid-cols-2 gap-3" id="mascot-grid"></div>
+      <div class="px-5 pt-5 pb-6 mt-auto">
+        <button class="btn btn-primary btn-block btn-lg" onclick="confirmMascot()">Choose buddy</button>
+      </div>
+    </section>
+
+    <!-- ============ SNAP ============ -->
+    <section class="screen" data-screen="snap">
+      <div class="px-5 pt-5 pb-1 flex items-center gap-2">
+        <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <h1 class="h1" style="font-size:20px">Add a book</h1>
+      </div>
+      <p class="px-6 small">Point at the cover.</p>
+      <div class="px-5 pt-4">
+        <div class="viewfinder">
+          <div class="vfc vftl"></div><div class="vfc vftr"></div><div class="vfc vfbl"></div><div class="vfc vfbr"></div>
+          <div class="text-center" style="color:rgba(255,255,255,.5)">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-top:8px">Camera</div>
+          </div>
+        </div>
+      </div>
+      <div class="px-5 pt-5 flex items-center justify-center">
+        <button onclick="go('identifying')" class="shutter"><div></div></button>
+      </div>
+      <div class="px-5 pt-6 pb-6 mt-auto text-center">
+        <button class="small font-medium" style="color:var(--accent)" onclick="go('confirm')">Can't snap? Search by title</button>
+      </div>
+    </section>
+
+    <!-- ============ IDENTIFYING ============ -->
+    <section class="screen" data-screen="identifying">
+      <div class="flex-1 flex flex-col items-center justify-center px-7 text-center">
+        <div class="spin" style="width:48px;height:48px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%"></div>
+        <div class="h2 mt-6">Finding your book</div>
+        <div class="small mt-1">Checking the cover and title</div>
+      </div>
+    </section>
+
+    <!-- ============ CONFIRM ============ -->
+    <section class="screen" data-screen="confirm">
+      <div class="px-5 pt-5 pb-1 flex items-center gap-2">
+        <button onclick="go('snap')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <h1 class="h1" style="font-size:20px">Is this it?</h1>
+      </div>
+      <div class="px-6 pt-4 flex gap-4 items-end">
+        <div class="cover c1" style="width:96px"><div class="cn">Peter Brown</div><div class="ct">The Wild Robot</div></div>
+        <div class="flex-1 pb-1">
+          <div class="h2 leading-tight">The Wild Robot</div>
+          <div class="small">Peter Brown</div>
+          <div class="mt-2 flex gap-1.5"><span class="tag">Animal</span><span class="tag">Fantasy</span></div>
+        </div>
+      </div>
+      <div class="px-5 pt-7">
+        <div class="eyebrow mb-2.5">Add as</div>
+        <div class="space-y-2">
+          <button class="card w-full p-4 text-left flex items-center gap-3" onclick="addBook('reading')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+            <div><div class="h3">Currently reading</div><div class="small">Track my progress</div></div>
+          </button>
+          <button class="card w-full p-4 text-left flex items-center gap-3" onclick="addBook('want')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <div><div class="h3">Want to read</div><div class="small">Save for later</div></div>
+          </button>
+        </div>
+      </div>
+      <div class="px-5 pt-6 pb-6 mt-auto text-center">
+        <button class="small font-medium" style="color:var(--muted)" onclick="go('snap')">Wrong book — try again</button>
+      </div>
+    </section>
+
+    <!-- ============ LIBRARY ============ -->
+    <section class="screen" data-screen="library">
+      <div class="px-5 pt-5 pb-1 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <h1 class="h1" style="font-size:20px">My books</h1>
+        </div>
+        <button class="icon-btn" onclick="go('snap')" style="background:var(--accent);color:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+      <div class="px-6 pt-2 flex gap-2 text-xs font-medium">
+        <button class="px-3 py-1.5 rounded-full" style="background:var(--accent);color:#fff">Finished 14</button>
+        <button class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)">Reading 2</button>
+        <button class="px-3 py-1.5 rounded-full" style="background:var(--surface);border:1px solid var(--line);color:var(--ink-2)">Want 5</button>
+      </div>
+      <div class="px-6 pt-4 pb-6 grid grid-cols-3 gap-3">
+        <div onclick="go('book-detail')"><div class="cover c5"><div class="cn">Pilkey</div><div class="ct">Dog Man</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
+        <div onclick="go('book-detail')"><div class="cover c4"><div class="cn">Sutherland</div><div class="ct">Wings of Fire #3</div></div><div class="stars-sm mt-1.5">★★★★☆</div></div>
+        <div onclick="go('book-detail')"><div class="cover c3"><div class="cn">Osborne</div><div class="ct">Magic Tree #28</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
+        <div onclick="go('book-detail')"><div class="cover c7"><div class="cn">Sanders</div><div class="ct">Unicorn Academy</div></div><div class="stars-sm mt-1.5">★★★☆☆</div></div>
+        <div onclick="go('book-detail')"><div class="cover c2"><div class="cn">Pennypacker</div><div class="ct">Pax</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
+        <div onclick="go('book-detail')"><div class="cover c6"><div class="cn">Parry</div><div class="ct">Whale of the Wild</div></div><div class="stars-sm mt-1.5">★★★★☆</div></div>
+        <div onclick="go('book-detail')"><div class="cover c9"><div class="cn">Lobel</div><div class="ct">Frog & Toad</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
+        <div onclick="go('book-detail')"><div class="cover c8"><div class="cn">Applegate</div><div class="ct">One & Only Ivan</div></div><div class="stars-sm mt-1.5">★★★★★</div></div>
+        <div onclick="go('book-detail')"><div class="cover c1"><div class="cn">DiCamillo</div><div class="ct">Despereaux</div></div><div class="stars-sm mt-1.5">★★★★☆</div></div>
+      </div>
+    </section>
+
+    <!-- ============ BOOK DETAIL / FINISH ============ -->
+    <section class="screen" data-screen="book-detail">
+      <div class="px-5 pt-5 pb-1 flex items-center gap-2">
+        <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <h1 class="h1" style="font-size:20px">Finished it?</h1>
+      </div>
+      <div class="px-6 pt-4 flex gap-4 items-end">
+        <div class="cover c1" style="width:80px"><div class="cn">Peter Brown</div><div class="ct">The Wild Robot</div></div>
+        <div class="flex-1 pb-1">
+          <div class="h2 leading-tight">The Wild Robot</div>
+          <div class="small num">240 pages · 9 days</div>
+        </div>
+      </div>
+      <div class="px-6 pt-7">
+        <div class="h3 mb-2.5">How many stars?</div>
+        <div class="flex gap-1.5" id="star-row">
+          <span class="star on" data-star="1">★</span><span class="star on" data-star="2">★</span><span class="star on" data-star="3">★</span><span class="star on" data-star="4">★</span><span class="star" data-star="5">★</span>
+        </div>
+      </div>
+      <div class="px-6 pt-5">
+        <div class="h3 mb-2.5">What did you think?</div>
+        <textarea class="w-full p-3.5 text-sm card" rows="3" placeholder="Funny? Sad? Worth telling your sister?" style="resize:none"></textarea>
+      </div>
+      <div class="px-6 pt-4">
+        <div class="flex flex-wrap gap-2">
+          <button class="sug">Funny</button><button class="sug" style="background:var(--accent-l);color:var(--accent-d);border-color:#CDE5E0">Touching</button><button class="sug">Wow</button><button class="sug">A bit slow</button>
+        </div>
+      </div>
+      <div class="px-5 pt-6 pb-6 mt-auto space-y-2">
+        <button class="btn btn-primary btn-block btn-lg" onclick="submitReview()">Mark as finished</button>
+        <button class="btn btn-ghost btn-block" onclick="go('kid-home')">Not yet</button>
+      </div>
+    </section>
+
+    <!-- ============ BADGES ============ -->
+    <section class="screen" data-screen="badges">
+      <div class="px-5 pt-5 pb-1 flex items-center gap-2">
+        <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <h1 class="h1" style="font-size:20px">Badges</h1>
+      </div>
+      <p class="px-6 small num">14 of 32 earned</p>
+      <div class="px-5 pt-4 grid grid-cols-4 gap-2.5">
+        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/></svg></div>First book</div>
+        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg></div>7-day streak</div>
+        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></div>Night owl</div>
+        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg></div>Animal lover</div>
+        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.5 6H21l-5 4 2 7-6-4-6 4 2-7-5-4h6.5z"/></svg></div>Fantasy fan</div>
+        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h6M7 13h4"/></svg></div>100 pages</div>
+        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/></svg></div>Comic crew</div>
+        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0z"/></svg></div>30-day streak</div>
+        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18"/></svg></div>Around world</div>
+        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>Mystery</div>
+        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l-2 6 6-2M14 6l4 4M13 19a9 9 0 0 0 6-9 9 9 0 0 0-9 9z"/></svg></div>Sci-fi</div>
+        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M4 19h15"/></svg></div>500 pages</div>
+      </div>
+      <div class="px-6 pt-6 pb-2"><h2 class="h2">Genre bingo</h2><p class="small">Read one of each to fill your card</p></div>
+      <div class="px-6 pt-1 pb-6 grid grid-cols-5 gap-1.5">
+        <div class="bingo done">Animal</div><div class="bingo done">Fantasy</div><div class="bingo done">Comic</div><div class="bingo">Mystery</div><div class="bingo">Sci-fi</div>
+        <div class="bingo done">Classic</div><div class="bingo">Quest</div><div class="bingo done" style="font-weight:600">★</div><div class="bingo">Spooky</div><div class="bingo">Play</div>
+        <div class="bingo">History</div><div class="bingo done">Friends</div><div class="bingo done">Travel</div><div class="bingo">Science</div><div class="bingo">Art</div>
+        <div class="bingo">Sports</div><div class="bingo">Cooking</div><div class="bingo done">Horse</div><div class="bingo">Music</div><div class="bingo">Hero</div>
+        <div class="bingo done">Nature</div><div class="bingo">News</div><div class="bingo">Space</div><div class="bingo done">Magic</div><div class="bingo">Robots</div>
+      </div>
+    </section>
+
+    <!-- ============ CHAT ============ -->
+    <section class="screen" data-screen="chat">
+      <div class="px-5 pt-5 pb-3 flex items-center gap-3 border-b" style="border-color:var(--line)">
+        <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <div class="flex-1">
+          <div class="h2" style="font-size:16px">Book Buddy</div>
+          <div class="small" style="color:var(--accent)">Ready to help</div>
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3" id="chat-log">
+        <div class="bubble-bot">Hi Olivia. You just finished <b>The Wild Robot</b> — five stars. Want something similar?</div>
+        <div class="bubble-user">Yes — something with animals please.</div>
+        <div class="bubble-bot">You also loved <b>Pax</b> and <b>A Whale of the Wild</b>. How about a story where animals team up for a big adventure?</div>
+        <div class="bubble-user">Maybe. What is it?</div>
+        <div class="bubble-bot" style="padding:0;overflow:hidden">
+          <div class="flex gap-3 p-3">
+            <div class="cover c2 shrink-0" style="width:56px"><div class="ct" style="font-size:8px">Pax: Journey Home</div></div>
+            <div class="flex-1 min-w-0">
+              <div class="h3 leading-tight">Pax: Journey Home</div>
+              <div class="small">Sara Pennypacker · ~270 pages</div>
+              <div class="body mt-1.5" style="font-size:12.5px">Sequel to <i>Pax</i>. A boy and his fox find each other again.</div>
+            </div>
+          </div>
+          <div class="flex gap-2 px-3 pb-3 pt-2 border-t" style="border-color:var(--line)">
+            <button class="sug" style="background:var(--accent);color:#fff;border-color:var(--accent)">Add to want-to-read</button>
+            <button class="sug">More</button>
+          </div>
+        </div>
+      </div>
+      <div class="px-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
+        <button class="sug">Pick my next book</button><button class="sug">Something funny</button><button class="sug">More fantasy</button><button class="sug">Shorter please</button>
+      </div>
+      <div class="px-4 pb-5 pt-2 border-t flex items-center gap-2" style="border-color:var(--line)">
+        <input type="text" placeholder="Ask Book Buddy…" class="flex-1 rounded-full px-4 py-3 text-sm" style="background:var(--line-2);border:1px solid var(--line)">
+        <button class="rounded-full" style="width:44px;height:44px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ============ PARENT GATE ============ -->
+    <section class="screen" data-screen="parent-gate">
+      <div class="px-5 pt-5 pb-1 flex items-center gap-2">
+        <button onclick="go('welcome')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <h1 class="h1" style="font-size:20px">Parent PIN</h1>
+      </div>
+      <p class="px-6 small">Quick check so the kids can't peek.</p>
+      <div class="px-5 pt-10 flex justify-center gap-3.5">
+        <div class="pin-dot" id="pd-0"></div><div class="pin-dot" id="pd-1"></div><div class="pin-dot" id="pd-2"></div><div class="pin-dot" id="pd-3"></div>
+      </div>
+      <div class="px-10 pt-10 grid grid-cols-3 gap-3" id="pin-pad">
+        <button class="pad" data-key="1">1</button><button class="pad" data-key="2">2</button><button class="pad" data-key="3">3</button>
+        <button class="pad" data-key="4">4</button><button class="pad" data-key="5">5</button><button class="pad" data-key="6">6</button>
+        <button class="pad" data-key="7">7</button><button class="pad" data-key="8">8</button><button class="pad" data-key="9">9</button>
+        <button class="pad" style="visibility:hidden">·</button><button class="pad" data-key="0">0</button>
+        <button class="pad" data-key="del"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0 auto"><path d="M21 4H8L3 12l5 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M18 9l-6 6M12 9l6 6"/></svg></button>
+      </div>
+      <div class="px-5 pb-6 pt-5 text-center small">Demo PIN: 1234</div>
+    </section>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="screen" data-screen="dashboard">
+      <div class="px-5 pt-5 pb-2 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button onclick="go('welcome')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <h1 class="h1" style="font-size:20px">Dashboard</h1>
+        </div>
+        <span class="small">This week</span>
+      </div>
+
+      <div class="px-5 pb-6 dash">
+        <div class="full card p-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="eyebrow">Family goal · together</div>
+              <div class="h2 mt-1">Read 200 minutes</div>
+            </div>
+            <div class="text-right">
+              <div class="font-semibold num" style="font-size:22px">142<span style="color:var(--muted);font-weight:400;font-size:16px"> / 200</span></div>
+              <div class="small">3 days left</div>
+            </div>
+          </div>
+          <div class="coop mt-3" style="height:12px"><div class="s-lia" style="width:47%"></div><div class="s-mia" style="left:47%;width:24%"></div></div>
+          <div class="flex items-center gap-4 mt-2 small">
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--lia)"></span>Olivia 94</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:var(--mia)"></span>Abigail 48</span>
+          </div>
+        </div>
+
+        <!-- Olivia -->
+        <div class="card p-5">
+          <div class="flex items-center gap-3">
+            <div class="av av-lia w-11 h-11" style="font-size:16px;border-radius:14px">O</div>
+            <div><div class="h2" style="font-size:16px">Olivia</div><div class="small num">Age 9 · Level 7</div></div>
+            <span class="chip ml-auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg><span class="num">12</span></span>
+          </div>
+          <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">142</div><div class="eyebrow">Min</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">3</div><div class="eyebrow">Books</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">2</div><div class="eyebrow">Shields</div></div>
+          </div>
+          <div class="mt-4"><div class="eyebrow mb-2">Top genres</div><div class="flex gap-1.5 flex-wrap"><span class="tag">Fantasy</span><span class="tag">Animal</span><span class="tag">Comic</span></div></div>
+          <div class="mt-4">
+            <div class="eyebrow mb-2">This week</div>
+            <div class="flex items-end gap-2 h-14">
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:60%;background:var(--lia)"></div><div class="small" style="font-size:9px">A</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:40%;background:var(--lia)"></div><div class="small" style="font-size:9px">T</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:80%;background:var(--lia)"></div><div class="small" style="font-size:9px">W</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:14%;background:var(--line)"></div><div class="small" style="font-size:9px">T</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:70%;background:var(--lia)"></div><div class="small" style="font-size:9px">F</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:90%;background:var(--lia)"></div><div class="small" style="font-size:9px">S</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:50%;background:var(--lia)"></div><div class="small" style="font-size:9px">S</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abigail -->
+        <div class="card p-5">
+          <div class="flex items-center gap-3">
+            <div class="av av-mia w-11 h-11" style="font-size:16px;border-radius:14px">A</div>
+            <div><div class="h2" style="font-size:16px">Abigail</div><div class="small num">Age 7 · Level 4</div></div>
+            <span class="chip ml-auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg><span class="num">5</span></span>
+          </div>
+          <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">88</div><div class="eyebrow">Min</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">2</div><div class="eyebrow">Books</div></div>
+            <div class="rounded-xl py-2.5" style="background:var(--line-2)"><div class="font-semibold num" style="font-size:19px">1</div><div class="eyebrow">Shields</div></div>
+          </div>
+          <div class="mt-4"><div class="eyebrow mb-2">Top genres</div><div class="flex gap-1.5 flex-wrap"><span class="tag">Unicorn</span><span class="tag">Early reader</span><span class="tag">Magic</span></div></div>
+          <div class="mt-4">
+            <div class="eyebrow mb-2">This week</div>
+            <div class="flex items-end gap-2 h-14">
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:40%;background:var(--mia)"></div><div class="small" style="font-size:9px">A</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:55%;background:var(--mia)"></div><div class="small" style="font-size:9px">T</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:8%;background:var(--line)"></div><div class="small" style="font-size:9px">W</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:35%;background:var(--mia)"></div><div class="small" style="font-size:9px">T</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:50%;background:var(--mia)"></div><div class="small" style="font-size:9px">F</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:65%;background:var(--mia)"></div><div class="small" style="font-size:9px">S</div></div>
+              <div class="flex-1 flex flex-col items-center gap-1"><div class="w-full rounded-t" style="height:30%;background:var(--mia)"></div><div class="small" style="font-size:9px">S</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity -->
+        <div class="full card p-5">
+          <div class="h2 mb-3" style="font-size:16px">Recent activity</div>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3">
+              <div class="av av-lia w-8 h-8" style="font-size:12px">O</div>
+              <div class="flex-1 min-w-0"><div class="text-sm"><b>Olivia</b> finished <b>The Wild Robot</b> <span class="stars-sm">★★★★★</span></div><div class="small">Today, 7:42 PM</div></div>
+            </li>
+            <li class="flex items-center gap-3">
+              <div class="av av-mia w-8 h-8" style="font-size:12px">A</div>
+              <div class="flex-1 min-w-0"><div class="text-sm"><b>Abigail</b> logged 20 min · <b>Unicorn Academy</b></div><div class="small">Today, 6:15 PM</div></div>
+            </li>
+            <li class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--line-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="var(--ink-2)"><path d="M12 2L4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5z"/></svg></div>
+              <div class="flex-1 min-w-0"><div class="text-sm"><b>Olivia</b> used a shield to save her streak</div><div class="small">Yesterday</div></div>
+            </li>
+            <li class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--accent-l)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></div>
+              <div class="flex-1 min-w-0"><div class="text-sm">Family hit <b>last week's goal</b></div><div class="small">Sunday</div></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+  // ===== FLAT-GEOMETRIC MASCOTS — cohesive set, solid fills only, no gradients =====
+  // Consistent style: rounded bodies, simple dot eyes, 2-3 flat colors each.
+  // Designed to drop into a 1:1 slot — swap each `svg` for an <img> later with zero layout change.
+  const MASCOTS = {
+    penguin: { name:"Pip", tag:"Bookish & loyal", bg:"#EEF0FE", svg:`
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="78" cy="178" rx="13" ry="6" fill="#E8A33D"/>
+        <ellipse cx="122" cy="178" rx="13" ry="6" fill="#E8A33D"/>
+        <rect x="48" y="58" width="104" height="120" rx="52" fill="#3F3D8C"/>
+        <ellipse cx="100" cy="124" rx="34" ry="46" fill="#F4F2EA"/>
+        <path d="M52 96 Q44 130 56 150 Q60 120 62 104 Z" fill="#322F73"/>
+        <path d="M148 96 Q156 130 144 150 Q140 120 138 104 Z" fill="#322F73"/>
+        <circle cx="100" cy="74" r="40" fill="#3F3D8C"/>
+        <circle cx="86" cy="72" r="5.5" fill="#1A1A18"/>
+        <circle cx="114" cy="72" r="5.5" fill="#1A1A18"/>
+        <circle cx="87.5" cy="70" r="1.6" fill="#fff"/>
+        <circle cx="115.5" cy="70" r="1.6" fill="#fff"/>
+        <path d="M93 84 L107 84 L100 93 Z" fill="#E8A33D"/>
+      </svg>`},
+    axolotl: { name:"Lulu", tag:"Curious & calm", bg:"#FCE9F2", svg:`
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="78" cy="172" rx="11" ry="5" fill="#E59BB6"/>
+        <ellipse cx="122" cy="172" rx="11" ry="5" fill="#E59BB6"/>
+        <circle cx="58" cy="66" r="11" fill="#EC7BA6"/>
+        <circle cx="52" cy="84" r="11" fill="#EC7BA6"/>
+        <circle cx="58" cy="102" r="11" fill="#EC7BA6"/>
+        <circle cx="142" cy="66" r="11" fill="#EC7BA6"/>
+        <circle cx="148" cy="84" r="11" fill="#EC7BA6"/>
+        <circle cx="142" cy="102" r="11" fill="#EC7BA6"/>
+        <rect x="52" y="74" width="96" height="100" rx="48" fill="#F7B9D0"/>
+        <circle cx="100" cy="84" r="46" fill="#F7B9D0"/>
+        <circle cx="86" cy="86" r="5" fill="#1A1A18"/>
+        <circle cx="114" cy="86" r="5" fill="#1A1A18"/>
+        <circle cx="87.5" cy="84" r="1.5" fill="#fff"/>
+        <circle cx="115.5" cy="84" r="1.5" fill="#fff"/>
+        <path d="M90 100 Q100 108 110 100" stroke="#C45B82" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="74" cy="98" r="6" fill="#EC7BA6" opacity=".5"/>
+        <circle cx="126" cy="98" r="6" fill="#EC7BA6" opacity=".5"/>
+      </svg>`},
+    fox: { name:"Fern", tag:"Clever & quick", bg:"#FBEDE6", svg:`
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M150 150 Q182 140 176 168 Q164 178 146 166 Z" fill="#D9712F"/>
+        <ellipse cx="170" cy="158" rx="9" ry="9" fill="#F4ECDD"/>
+        <rect x="54" y="92" width="92" height="84" rx="44" fill="#D9712F"/>
+        <ellipse cx="100" cy="150" rx="28" ry="24" fill="#F4ECDD"/>
+        <path d="M60 56 L52 22 L92 50 Z" fill="#D9712F"/>
+        <path d="M140 56 L148 22 L108 50 Z" fill="#D9712F"/>
+        <path d="M64 52 L60 32 L82 50 Z" fill="#F4ECDD"/>
+        <path d="M136 52 L140 32 L118 50 Z" fill="#F4ECDD"/>
+        <circle cx="100" cy="86" r="46" fill="#D9712F"/>
+        <path d="M72 96 Q100 84 128 96 Q120 116 100 118 Q80 116 72 96 Z" fill="#F4ECDD"/>
+        <circle cx="85" cy="82" r="5" fill="#1A1A18"/>
+        <circle cx="115" cy="82" r="5" fill="#1A1A18"/>
+        <circle cx="86.5" cy="80" r="1.5" fill="#fff"/>
+        <circle cx="116.5" cy="80" r="1.5" fill="#fff"/>
+        <ellipse cx="100" cy="98" rx="4.5" ry="3.5" fill="#1A1A18"/>
+      </svg>`},
+    dragon: { name:"Drago", tag:"Brave & kind", bg:"#E2F2EE", svg:`
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M52 150 Q22 140 30 116 Q44 126 58 142 Z" fill="#3A9E8C"/>
+        <path d="M50 110 Q34 118 42 134 Q52 126 58 120 Z" fill="#46B7A3"/>
+        <path d="M150 110 Q166 118 158 134 Q148 126 142 120 Z" fill="#46B7A3"/>
+        <rect x="52" y="92" width="96" height="84" rx="44" fill="#3A9E8C"/>
+        <ellipse cx="100" cy="150" rx="30" ry="24" fill="#EBC765"/>
+        <path d="M80 52 L74 26 L92 50 Z" fill="#4B5563"/>
+        <path d="M120 52 L126 26 L108 50 Z" fill="#4B5563"/>
+        <circle cx="100" cy="84" r="46" fill="#3A9E8C"/>
+        <ellipse cx="100" cy="100" rx="20" ry="13" fill="#349185"/>
+        <circle cx="85" cy="80" r="5.5" fill="#1A1A18"/>
+        <circle cx="115" cy="80" r="5.5" fill="#1A1A18"/>
+        <circle cx="86.5" cy="78" r="1.6" fill="#fff"/>
+        <circle cx="116.5" cy="78" r="1.6" fill="#fff"/>
+        <circle cx="93" cy="100" r="1.6" fill="#1A1A18"/>
+        <circle cx="107" cy="100" r="1.6" fill="#1A1A18"/>
+      </svg>`},
+    otter: { name:"Odi", tag:"Playful & warm", bg:"#F3EDE4", svg:`
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="54" y="92" width="92" height="84" rx="44" fill="#9A6B43"/>
+        <ellipse cx="100" cy="150" rx="26" ry="22" fill="#E7D3B3"/>
+        <circle cx="72" cy="54" r="11" fill="#9A6B43"/>
+        <circle cx="128" cy="54" r="11" fill="#9A6B43"/>
+        <circle cx="72" cy="54" r="5" fill="#7C5436"/>
+        <circle cx="128" cy="54" r="5" fill="#7C5436"/>
+        <circle cx="100" cy="84" r="46" fill="#9A6B43"/>
+        <ellipse cx="100" cy="98" rx="22" ry="17" fill="#E7D3B3"/>
+        <circle cx="86" cy="80" r="5" fill="#1A1A18"/>
+        <circle cx="114" cy="80" r="5" fill="#1A1A18"/>
+        <circle cx="87.5" cy="78" r="1.5" fill="#fff"/>
+        <circle cx="115.5" cy="78" r="1.5" fill="#fff"/>
+        <ellipse cx="100" cy="92" rx="4.5" ry="3.5" fill="#1A1A18"/>
+        <path d="M92 100 Q100 107 108 100" stroke="#7C5436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>`}
+  };
+
+  // ===== Persistent state (localStorage) =====
+  const STORAGE_KEY = 'readinglog:v4';
+  const DEFAULT_STATE = {
+    activeKid:'lia',
+    kids:{
+      lia:{ name:'Olivia', mascot:'penguin', level:7, xp:340, xpMax:500, streak:12, shields:2 },
+      mia:{ name:'Abigail', mascot:'axolotl', level:4, xp:180, xpMax:350, streak:5, shields:1 }
+    },
+    selectedMascot:'penguin',
+    pin:'',
+    log:[]
+  };
+  function loadState(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      const saved = JSON.parse(raw);
+      return Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), saved);
+    } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
+  }
+  function saveState(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+  function resetState(){
+    try { localStorage.removeItem(STORAGE_KEY); location.reload(); } catch(e) {}
+  }
+  window.resetReadingLog = resetState; // dev escape hatch: call from console
+  const state = loadState();
+
+  function go(name){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const t=document.querySelector(`[data-screen="${name}"]`); if(!t)return;
+    t.classList.add('active','fade-in');
+    document.getElementById('app').classList.toggle('wide', name==='dashboard');
+    if(name==='mascot-picker') renderMascotGrid();
+    if(name==='kid-home') paintHome();
+    window.scrollTo(0,0);
+  }
+  function selectKid(k){ state.activeKid=k; state.selectedMascot=state.kids[k].mascot; saveState(); go('kid-home'); }
+
+  function paintHome(){
+    const kid=state.kids[state.activeKid], m=MASCOTS[kid.mascot];
+    document.getElementById('h-token').style.background=m.bg;
+    document.getElementById('h-mascot').innerHTML=m.svg;
+    document.getElementById('h-name').textContent=m.name;
+    document.getElementById('h-tag').textContent=m.tag;
+    document.getElementById('h-level').textContent=kid.level;
+    document.getElementById('h-xp').textContent=kid.xp;
+    document.getElementById('h-xpmax').textContent=kid.xpMax;
+    document.getElementById('h-xpbar').style.width=Math.round(100*kid.xp/kid.xpMax)+'%';
+    document.getElementById('h-streak').textContent=kid.streak;
+    document.getElementById('h-shields').textContent=kid.shields;
+  }
+
+  function renderMascotGrid(){
+    const grid=document.getElementById('mascot-grid'); if(!grid)return;
+    grid.innerHTML='';
+    Object.entries(MASCOTS).forEach(([key,m])=>{
+      const sel=state.selectedMascot===key;
+      const b=document.createElement('button');
+      b.className='card p-3 text-center';
+      b.style.borderColor = sel ? 'var(--accent)' : 'var(--line)';
+      b.style.boxShadow = sel ? '0 0 0 1px var(--accent)' : 'none';
+      b.innerHTML=`<div class="token mx-auto" style="width:96px;height:96px;background:${m.bg}"><div style="width:76px;height:76px">${m.svg}</div></div>
+        <div class="h3 mt-2">${m.name}</div><div class="small">${m.tag}</div>`;
+      b.onclick=()=>{ state.selectedMascot=key; renderMascotGrid(); };
+      grid.appendChild(b);
+    });
+  }
+  function confirmMascot(){ state.kids[state.activeKid].mascot=state.selectedMascot; saveState(); toast(MASCOTS[state.selectedMascot].name+' is your buddy'); go('kid-home'); }
+
+  function bump(id,d){ const el=document.getElementById(id); el.value=Math.max(0,(parseInt(el.value,10)||0)+d); }
+  function setVal(id,v){ document.getElementById(id).value=v; }
+
+  function logReading(){
+    const min=parseInt(document.getElementById('log-min').value,10)||0;
+    const pg=parseInt(document.getElementById('log-pg').value,10)||0;
+    const gain=Math.max(min,pg,5), kid=state.kids[state.activeKid];
+    kid.xp=Math.min(kid.xpMax,kid.xp+gain);
+    if(kid.xp>=kid.xpMax){ kid.level++; kid.xp=0; kid.xpMax=Math.round(kid.xpMax*1.2); }
+    kid.streak++;
+    state.log.push({ kid: state.activeKid, minutes: min, pages: pg, ts: Date.now() });
+    saveState();
+    document.getElementById('lg-xp').textContent=gain;
+    document.getElementById('lg-cur').textContent=kid.xp;
+    document.getElementById('lg-max').textContent=kid.xpMax;
+    document.getElementById('lg-level').textContent=kid.level;
+    document.getElementById('lg-bar').style.width=Math.round(100*kid.xp/kid.xpMax)+'%';
+    go('logged');
+  }
+
+  function setupStars(){
+    const row=document.getElementById('star-row'); if(!row)return;
+    row.addEventListener('click',e=>{
+      const t=e.target.closest('.star'); if(!t)return;
+      const n=parseInt(t.dataset.star,10);
+      row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',(i+1)<=n));
+    });
+  }
+  function submitReview(){ toast('Review saved · +50 XP'); setTimeout(()=>go('kid-home'),600); }
+  function addBook(s){ toast(s==='reading'?'Added to reading':'Saved for later'); setTimeout(()=>go('kid-home'),600); }
+
+  function setupPin(){
+    const pad=document.getElementById('pin-pad'); if(!pad)return;
+    pad.addEventListener('click',e=>{
+      const b=e.target.closest('[data-key]'); if(!b)return;
+      const k=b.dataset.key;
+      if(k==='del') state.pin=state.pin.slice(0,-1);
+      else if(state.pin.length<4) state.pin+=k;
+      paintPin();
+      if(state.pin.length===4) setTimeout(()=>{
+        if(state.pin==='1234'){ state.pin=''; paintPin(); go('dashboard'); }
+        else { toast('Try again'); state.pin=''; paintPin(); }
+      },180);
+    });
+  }
+  function paintPin(){ for(let i=0;i<4;i++) document.getElementById('pd-'+i).classList.toggle('filled',i<state.pin.length); }
+
+  function toast(msg){
+    const w=document.getElementById('toast-wrap');
+    const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+    w.appendChild(t); setTimeout(()=>t.remove(),2500);
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{ paintHome(); setupStars(); setupPin(); });
+</script>
+
+</body>
+</html>
