@@ -620,28 +620,15 @@
         <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h1 class="h1" style="font-size:20px">Badges</h1>
       </div>
-      <p class="px-6 small num">14 of 32 earned</p>
-      <div class="px-5 pt-4 grid grid-cols-4 gap-2.5">
-        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/></svg></div>First book</div>
-        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg></div>7-day streak</div>
-        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></div>Night owl</div>
-        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg></div>Animal lover</div>
-        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.5 6H21l-5 4 2 7-6-4-6 4 2-7-5-4h6.5z"/></svg></div>Fantasy fan</div>
-        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h6M7 13h4"/></svg></div>100 pages</div>
-        <div class="badge unlocked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/></svg></div>Comic crew</div>
-        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0z"/></svg></div>30-day streak</div>
-        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18"/></svg></div>Around world</div>
-        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>Mystery</div>
-        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l-2 6 6-2M14 6l4 4M13 19a9 9 0 0 0 6-9 9 9 0 0 0-9 9z"/></svg></div>Sci-fi</div>
-        <div class="badge locked"><div class="bi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M4 19h15"/></svg></div>500 pages</div>
-      </div>
+      <p class="px-6 small num" id="badges-count">0 earned</p>
+      <div class="px-5 pt-4 grid grid-cols-4 gap-2.5" id="badges-grid"></div>
       <div class="px-6 pt-6 pb-2"><h2 class="h2">Genre bingo</h2><p class="small">Read one of each to fill your card</p></div>
-      <div class="px-6 pt-1 pb-6 grid grid-cols-5 gap-1.5">
-        <div class="bingo done">Animal</div><div class="bingo done">Fantasy</div><div class="bingo done">Comic</div><div class="bingo">Mystery</div><div class="bingo">Sci-fi</div>
-        <div class="bingo done">Classic</div><div class="bingo">Quest</div><div class="bingo done" style="font-weight:600">★</div><div class="bingo">Spooky</div><div class="bingo">Play</div>
-        <div class="bingo">History</div><div class="bingo done">Friends</div><div class="bingo done">Travel</div><div class="bingo">Science</div><div class="bingo">Art</div>
-        <div class="bingo">Sports</div><div class="bingo">Cooking</div><div class="bingo done">Horse</div><div class="bingo">Music</div><div class="bingo">Hero</div>
-        <div class="bingo done">Nature</div><div class="bingo">News</div><div class="bingo">Space</div><div class="bingo done">Magic</div><div class="bingo">Robots</div>
+      <div class="px-6 pt-1 pb-6 grid grid-cols-5 gap-1.5" id="bingo-grid">
+        <div class="bingo" data-genre="Animal">Animal</div><div class="bingo" data-genre="Fantasy">Fantasy</div><div class="bingo" data-genre="Comic">Comic</div><div class="bingo" data-genre="Mystery">Mystery</div><div class="bingo" data-genre="Sci-fi">Sci-fi</div>
+        <div class="bingo" data-genre="Adventure">Adventure</div><div class="bingo" data-genre="Friendship">Friends</div><div class="bingo done" style="font-weight:600">★</div><div class="bingo" data-genre="Spooky">Spooky</div><div class="bingo" data-genre="Humor">Humor</div>
+        <div class="bingo" data-genre="Historical">History</div><div class="bingo" data-genre="Realistic">Realistic</div><div class="bingo" data-genre="Travel">Travel</div><div class="bingo" data-genre="Science">Science</div><div class="bingo" data-genre="Art">Art</div>
+        <div class="bingo" data-genre="Sports">Sports</div><div class="bingo" data-genre="Cooking">Cooking</div><div class="bingo" data-genre="Animal">Animal</div><div class="bingo" data-genre="Music">Music</div><div class="bingo" data-genre="Hero">Hero</div>
+        <div class="bingo" data-genre="Nature">Nature</div><div class="bingo" data-genre="News">News</div><div class="bingo" data-genre="Space">Space</div><div class="bingo" data-genre="Magic">Magic</div><div class="bingo" data-genre="Robots">Robots</div>
       </div>
     </section>
 
@@ -984,6 +971,7 @@
     if(name==='library')  { paintLibrary(); }
     if(name==='dashboard'){ paintDashboard(); }
     if(name==='chat')     { openChat(); }
+    if(name==='badges')   { paintBadges(); }
     if(name==='snap') startCamera(); else stopCamera();
     window.scrollTo(0,0);
   }
@@ -1029,24 +1017,232 @@
   function bump(id,d){ const el=document.getElementById(id); el.value=Math.max(0,(parseInt(el.value,10)||0)+d); }
   function setVal(id,v){ document.getElementById(id).value=v; }
 
-  function logReading(){
-    const min=parseInt(document.getElementById('log-min').value,10)||0;
-    const pg=parseInt(document.getElementById('log-pg').value,10)||0;
-    const gain=Math.max(min,pg,5), kid=state.kids[state.activeKid];
-    kid.xp=Math.min(kid.xpMax,kid.xp+gain);
-    if(kid.xp>=kid.xpMax){ kid.level++; kid.xp=0; kid.xpMax=Math.round(kid.xpMax*1.2); }
-    kid.streak++;
-    state.log.push({ kid: state.activeKid, minutes: min, pages: pg, ts: Date.now() });
+  // ===== Streak rules =====
+  // A "reading day" = 15 minutes OR 20 pages.
+  // Streak only increments once per qualifying day. Same-day re-logs don't bump it.
+  // Missing a single day uses a shield if available; otherwise resets to 1.
+  // Earn 1 shield every 7 days of unbroken streak (cap at 3).
+  // XP: max of pages, half of minutes, or 1 (minimum reward).
+  function todayIso(){ return new Date().toISOString().slice(0,10); }
+  function isoDaysBetween(a, b){ // a, b are 'YYYY-MM-DD'
+    const da = new Date(a + 'T00:00:00'); const db = new Date(b + 'T00:00:00');
+    return Math.round((db - da) / 86400000);
+  }
+
+  async function logReading(){
+    const min = parseInt(document.getElementById('log-min').value, 10) || 0;
+    const pg  = parseInt(document.getElementById('log-pg').value, 10) || 0;
+    if (min === 0 && pg === 0) { toast('Enter minutes or pages'); return; }
+
+    const kid = state.kids[state.activeKid];
+    const today = todayIso();
+    const qualifies = (min >= 15 || pg >= 20);
+
+    // Pull fresh streak/shields/last_log_date from DB so multiple devices stay in sync
+    let last_log_date = null;
+    if (sb && kidDbIds[state.activeKid]) {
+      const { data } = await sb.from('kids').select('streak, shields, last_log_date, level, xp, xp_max')
+        .eq('id', kidDbIds[state.activeKid]).single();
+      if (data) {
+        kid.streak    = data.streak    ?? kid.streak;
+        kid.shields   = data.shields   ?? kid.shields;
+        kid.level     = data.level     ?? kid.level;
+        kid.xp        = data.xp        ?? kid.xp;
+        kid.xpMax     = data.xp_max    ?? kid.xpMax;
+        last_log_date = data.last_log_date || null;
+      }
+    }
+
+    // XP: max(pages, floor(min/2), 1) — at least 1 to feel rewarding
+    const xpGain = Math.max(pg, Math.floor(min / 2), 1);
+    kid.xp += xpGain;
+    while (kid.xp >= kid.xpMax) {
+      kid.xp -= kid.xpMax;
+      kid.level++;
+      kid.xpMax = Math.round(kid.xpMax * 1.2);
+    }
+
+    // Streak logic — only updates if the day qualifies and isn't already counted
+    let shieldUsed = false;
+    let streakAction = 'none'; // 'first' | 'continue' | 'reset' | 'shield' | 'none'
+    if (qualifies && last_log_date !== today) {
+      if (!last_log_date) {
+        kid.streak = 1; streakAction = 'first';
+      } else {
+        const gap = isoDaysBetween(last_log_date, today);
+        if (gap === 1) {
+          kid.streak++; streakAction = 'continue';
+        } else if (gap === 2 && kid.shields > 0) {
+          kid.shields--; kid.streak++;
+          shieldUsed = true; streakAction = 'shield';
+        } else {
+          kid.streak = 1; streakAction = 'reset';
+        }
+      }
+      last_log_date = today;
+
+      // Shield earning: every 7 streak days, grant +1 (cap at 3)
+      if ((streakAction === 'continue' || streakAction === 'shield') && kid.streak % 7 === 0 && kid.shields < 3) {
+        kid.shields = Math.min(3, kid.shields + 1);
+      }
+    }
+
+    state.log.push({ kid: state.activeKid, minutes: min, pages: pg, xp: xpGain, ts: Date.now() });
     saveState();
-    // Fire-and-forget to Supabase — UI updates immediately either way
-    syncKidToDB(state.activeKid);
-    insertLogEntryToDB(state.activeKid, min, pg, gain);
-    document.getElementById('lg-xp').textContent=gain;
-    document.getElementById('lg-cur').textContent=kid.xp;
-    document.getElementById('lg-max').textContent=kid.xpMax;
-    document.getElementById('lg-level').textContent=kid.level;
-    document.getElementById('lg-bar').style.width=Math.round(100*kid.xp/kid.xpMax)+'%';
+
+    // Persist to DB (await so badges check sees fresh data)
+    if (sb && kidDbIds[state.activeKid]) {
+      await sb.from('kids').update({
+        level: kid.level,
+        xp: kid.xp,
+        xp_max: kid.xpMax,
+        streak: kid.streak,
+        shields: kid.shields,
+        last_log_date
+      }).eq('id', kidDbIds[state.activeKid]);
+
+      await sb.from('log_entries').insert({
+        kid_id: kidDbIds[state.activeKid],
+        minutes: min, pages: pg,
+        xp_earned: xpGain,
+        shield_used: shieldUsed,
+        log_date: today
+      });
+    }
+
+    // Award any newly-earned badges (non-blocking — toasts fire if any)
+    checkBadges().catch(() => {});
+
+    // Paint logged screen
+    document.getElementById('lg-xp').textContent    = xpGain;
+    document.getElementById('lg-cur').textContent   = kid.xp;
+    document.getElementById('lg-max').textContent   = kid.xpMax;
+    document.getElementById('lg-level').textContent = kid.level;
+    document.getElementById('lg-bar').style.width   = Math.round(100*kid.xp/kid.xpMax) + '%';
+
+    // Inform user about streak event
+    if (streakAction === 'shield')  toast('Shield used — streak saved');
+    else if (streakAction === 'reset' && !qualifies) toast('Read 15 min or 20 pages to count for your streak');
     go('logged');
+  }
+
+  // ===== Badges =====
+  const BADGES = [
+    { key:'first_book',     name:'First book',       icon:'book',   check: ({finished})  => finished >= 1 },
+    { key:'streak_3',       name:'3-day streak',     icon:'flame',  check: ({streak})    => streak >= 3 },
+    { key:'streak_7',       name:'7-day streak',     icon:'flame',  check: ({streak})    => streak >= 7 },
+    { key:'streak_14',      name:'2-week streak',    icon:'flame',  check: ({streak})    => streak >= 14 },
+    { key:'streak_30',      name:'Month-long',       icon:'trophy', check: ({streak})    => streak >= 30 },
+    { key:'streak_100',     name:'100-day streak',   icon:'trophy', check: ({streak})    => streak >= 100 },
+    { key:'pages_100',      name:'100 pages',        icon:'pages',  check: ({pages})     => pages >= 100 },
+    { key:'pages_500',      name:'500 pages',        icon:'pages',  check: ({pages})     => pages >= 500 },
+    { key:'pages_1000',     name:'1,000 pages',      icon:'pages',  check: ({pages})     => pages >= 1000 },
+    { key:'books_5',        name:'5 books',          icon:'stack',  check: ({finished})  => finished >= 5 },
+    { key:'books_10',       name:'10 books',         icon:'stack',  check: ({finished})  => finished >= 10 },
+    { key:'minutes_300',    name:'5 hours read',     icon:'clock',  check: ({minutes})   => minutes >= 300 },
+    { key:'night_owl',      name:'Night owl',        icon:'moon',   check: ({logs})      => logs.some(l => { const h = new Date(l.created_at).getHours(); return h >= 20 || h < 6; }) },
+    { key:'early_bird',     name:'Early bird',       icon:'sun',    check: ({logs})      => logs.some(l => { const h = new Date(l.created_at).getHours(); return h >= 5 && h < 8; }) },
+    { key:'animal_lover',   name:'Animal lover',     icon:'paw',    check: ({genres})    => (genres['Animal']||0) >= 3 },
+    { key:'fantasy_fan',    name:'Fantasy fan',      icon:'star',   check: ({genres})    => (genres['Fantasy']||0) >= 3 },
+    { key:'comic_crew',     name:'Comic crew',       icon:'smile',  check: ({genres})    => (genres['Comic']||0) + (genres['Humor']||0) >= 1 },
+    { key:'mystery_solver', name:'Mystery solver',   icon:'search', check: ({genres})    => (genres['Mystery']||0) >= 3 },
+    { key:'sci_fi',         name:'Sci-fi explorer',  icon:'rocket', check: ({genres})    => (genres['Sci-fi']||0) >= 3 },
+    { key:'around_world',   name:'Around the world', icon:'globe',  check: ({genres})    => (genres['Historical']||0) + (genres['Travel']||0) + (genres['Realistic']||0) >= 3 },
+    { key:'genre_explorer', name:'Genre explorer',   icon:'compass',check: ({genres})    => Object.keys(genres).length >= 5 }
+  ];
+  const BADGE_ICON_SVG = {
+    book:    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/></svg>',
+    flame:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3 4 5 4 9a4 4 0 1 1-8 0c0-2 1-3 1-5-2 1-4 4-4 7a7 7 0 1 0 14 0c0-6-5-8-7-11z"/></svg>',
+    trophy:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0z"/><path d="M5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3"/></svg>',
+    pages:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h6M7 13h4"/></svg>',
+    stack:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg>',
+    clock:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    moon:    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+    sun:     '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>',
+    paw:     '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="9" r="2"/><circle cx="10" cy="5" r="2"/><circle cx="14" cy="5" r="2"/><circle cx="18" cy="9" r="2"/><path d="M9 14c0-2 1.5-4 3-4s3 2 3 4-1 5-3 5-3-3-3-5z"/></svg>',
+    star:    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.5 6H21l-5 4 2 7-6-4-6 4 2-7-5-4h6.5z"/></svg>',
+    smile:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/></svg>',
+    search:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
+    rocket:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l-2 6 6-2M14 6l4 4M13 19a9 9 0 0 0 6-9 9 9 0 0 0-9 9z"/></svg>',
+    globe:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18"/></svg>',
+    compass: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M14 10l-4 2 2 4 4-2-2-4z"/></svg>'
+  };
+
+  async function getKidStatsForBadges() {
+    if (!sb || !kidDbIds[state.activeKid]) return null;
+    const kidId = kidDbIds[state.activeKid];
+    const [kidR, logsR, kbsR, earnedR] = await Promise.all([
+      sb.from('kids').select('streak, shields').eq('id', kidId).single(),
+      sb.from('log_entries').select('minutes, pages, created_at').eq('kid_id', kidId),
+      sb.from('kid_books').select('status, books:book_id(genres)').eq('kid_id', kidId),
+      sb.from('earned_badges').select('badge_key').eq('kid_id', kidId)
+    ]);
+    const logs = logsR.data || [];
+    const kbs  = kbsR.data || [];
+    const finishedBooks = kbs.filter(k => k.status === 'finished');
+    const totalPages   = logs.reduce((s, l) => s + (l.pages   || 0), 0);
+    const totalMinutes = logs.reduce((s, l) => s + (l.minutes || 0), 0);
+    const genres = {};
+    finishedBooks.forEach(k => (k.books?.genres || []).forEach(g => genres[g] = (genres[g] || 0) + 1));
+    return {
+      ctx: {
+        streak: kidR.data?.streak || 0,
+        shields: kidR.data?.shields || 0,
+        finished: finishedBooks.length,
+        pages: totalPages,
+        minutes: totalMinutes,
+        logs, genres
+      },
+      earnedSet: new Set((earnedR.data || []).map(e => e.badge_key))
+    };
+  }
+
+  async function checkBadges() {
+    const info = await getKidStatsForBadges();
+    if (!info) return;
+    const { ctx, earnedSet } = info;
+    const toAward = [];
+    for (const b of BADGES) {
+      if (earnedSet.has(b.key)) continue;
+      try { if (b.check(ctx)) toAward.push(b); } catch (e) {}
+    }
+    if (toAward.length === 0) return;
+    try {
+      await sb.from('earned_badges').insert(toAward.map(b => ({
+        kid_id: kidDbIds[state.activeKid],
+        badge_key: b.key
+      })));
+      toAward.forEach(b => toast('Badge earned: ' + b.name));
+    } catch (e) { console.warn('badge insert:', e); }
+  }
+
+  async function paintBadges() {
+    const info = await getKidStatsForBadges();
+    if (!info) return;
+    const { earnedSet } = info;
+    const earnedCount = BADGES.filter(b => earnedSet.has(b.key)).length;
+    const countEl = document.getElementById('badges-count');
+    if (countEl) countEl.textContent = earnedCount + ' of ' + BADGES.length + ' earned';
+    const grid = document.getElementById('badges-grid');
+    if (grid) {
+      grid.innerHTML = BADGES.map(b => {
+        const unlocked = earnedSet.has(b.key);
+        return `<div class="badge ${unlocked ? 'unlocked' : 'locked'}">
+          <div class="bi">${BADGE_ICON_SVG[b.icon] || ''}</div>${escapeHtml(b.name)}
+        </div>`;
+      }).join('');
+    }
+    // Refresh genre bingo with real data
+    const bingo = document.getElementById('bingo-grid');
+    if (bingo) {
+      const counts = info.ctx.genres || {};
+      const cells = bingo.querySelectorAll('.bingo[data-genre]');
+      cells.forEach(c => {
+        const g = c.dataset.genre;
+        const done = (counts[g] || 0) >= 1;
+        c.classList.toggle('done', done);
+      });
+    }
   }
 
   function setupStars(){
@@ -1086,6 +1282,7 @@
           series: book.series || null,
           series_number: book.series_number != null ? book.series_number : null,
           pages: book.pages || null,
+          chapters: book.chapters || null,
           google_books_id: book.google_books_id || null,
           cover_url: book.cover_url || null,
           genres: Array.isArray(book.genres) ? book.genres : null
@@ -1246,7 +1443,15 @@
     const days = (kb.started_at && kb.finished_at)
       ? Math.max(1, Math.round((new Date(kb.finished_at) - new Date(kb.started_at)) / 86400000))
       : null;
-    const meta = [b.pages ? b.pages + ' pages' : '', days ? days + ' days' : ''].filter(Boolean).join(' · ');
+    const metaParts = [
+      b.pages ? b.pages + ' pages' : '',
+      b.chapters ? b.chapters + ' chapters' : '',
+      days ? days + ' days' : ''
+    ].filter(Boolean);
+    const meta = metaParts.join(' · ');
+    const chapterCta = b.chapters
+      ? `<button class="small font-medium" style="color:var(--muted);font-size:11px;background:none;border:none;padding:0;margin-top:4px;cursor:pointer" onclick="promptChapters('${b.id}')">Edit chapters</button>`
+      : `<button class="small font-medium" style="color:var(--accent);font-size:12px;background:none;border:none;padding:0;margin-top:4px;cursor:pointer" onclick="promptChapters('${b.id}')">+ Add chapter count</button>`;
     const coverInner = b.cover_url
       ? `<img src="${b.cover_url}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit">`
       : `<div class="cn">${escapeHtml(b.author || '')}</div><div class="ct">${escapeHtml(b.title || '')}</div>`;
@@ -1259,6 +1464,7 @@
           <div class="h2 leading-tight">${escapeHtml(b.title || '(no title)')}</div>
           <div class="small">${escapeHtml(b.author || '')}</div>
           <div class="small num" style="margin-top:4px">${meta}</div>
+          <div>${chapterCta}</div>
           ${Array.isArray(b.genres) && b.genres.length ? `<div class="mt-2 flex gap-1.5 flex-wrap">${b.genres.map(g => `<span class="tag">${escapeHtml(g)}</span>`).join('')}</div>` : ''}
         </div>
       </div>
@@ -1306,7 +1512,30 @@
     }).eq('id', viewingKidBook.id);
     if (error) { toast('Save failed: ' + error.message); return; }
     toast('Marked as finished');
+    checkBadges().catch(() => {});
     setTimeout(() => go('kid-home'), 600);
+  }
+
+  async function promptChapters(bookId) {
+    if (!sb || !bookId) return;
+    const cur = (viewingKidBook && viewingKidBook.books && viewingKidBook.books.chapters) || '';
+    const v = prompt('How many chapters does this book have?', cur);
+    if (v === null) return; // canceled
+    const trimmed = String(v).trim();
+    if (trimmed === '') {
+      // Clear chapters
+      const { error } = await sb.from('books').update({ chapters: null }).eq('id', bookId);
+      if (error) { toast('Save failed: ' + error.message); return; }
+      if (viewingKidBook && viewingKidBook.books) viewingKidBook.books.chapters = null;
+    } else {
+      const n = parseInt(trimmed, 10);
+      if (isNaN(n) || n < 1 || n > 999) { toast('Enter a number between 1 and 999'); return; }
+      const { error } = await sb.from('books').update({ chapters: n }).eq('id', bookId);
+      if (error) { toast('Save failed: ' + error.message); return; }
+      if (viewingKidBook && viewingKidBook.books) viewingKidBook.books.chapters = n;
+    }
+    paintBookDetail();
+    toast('Chapters saved');
   }
 
   async function deleteBook() {
