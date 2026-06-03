@@ -81,32 +81,47 @@ module.exports = async function handler(req, res) {
     try { book = JSON.parse(jsonMatch[0]); }
     catch (e) { return res.status(502).json({ error: 'Bad JSON from model', raw: jsonMatch[0].slice(0, 300) }); }
 
-    // Enrich with Google Books data (cover art + page count) — best-effort
+    // Enrich with cover art + page count — Open Library first (free, no quota), Google Books fallback
     let cover_url = null;
     let pages = null;
     let google_books_id = null;
     if (book.title) {
+      // === Try Open Library ===
       try {
-        const q = encodeURIComponent('intitle:' + book.title + (book.author ? ' inauthor:' + book.author : ''));
-        const gbResp = await fetch('https://www.googleapis.com/books/v1/volumes?q=' + q + '&maxResults=3&printType=books');
-        if (gbResp.ok) {
-          const gb = await gbResp.json();
-          const items = (gb && gb.items) || [];
-          // Pick the first item that has a thumbnail
-          const match = items.find(it => it && it.volumeInfo && it.volumeInfo.imageLinks && it.volumeInfo.imageLinks.thumbnail) || items[0];
-          if (match && match.volumeInfo) {
-            const v = match.volumeInfo;
-            google_books_id = match.id || null;
-            pages = v.pageCount || null;
-            if (v.imageLinks) {
-              // Use the largest available, force https
-              const link = v.imageLinks.extraLarge || v.imageLinks.large || v.imageLinks.medium || v.imageLinks.small || v.imageLinks.thumbnail || v.imageLinks.smallThumbnail;
-              if (link) cover_url = link.replace(/^http:\/\//, 'https://').replace(/&edge=curl/g, '');
-            }
+        const q = encodeURIComponent(book.title + (book.author ? ' ' + book.author : ''));
+        const olResp = await fetch('https://openlibrary.org/search.json?q=' + q + '&limit=5');
+        if (olResp.ok) {
+          const ol = await olResp.json();
+          const docs = (ol && ol.docs) || [];
+          // Prefer a doc with a cover_i
+          const match = docs.find(d => d.cover_i) || docs[0];
+          if (match) {
+            if (match.cover_i) cover_url = 'https://covers.openlibrary.org/b/id/' + match.cover_i + '-L.jpg';
+            if (!pages && match.number_of_pages_median) pages = match.number_of_pages_median;
           }
         }
-      } catch (e) {
-        // Non-fatal — return without enrichment
+      } catch (e) { /* non-fatal */ }
+
+      // === Fallback to Google Books only if we still don't have a cover ===
+      if (!cover_url) {
+        try {
+          const q = encodeURIComponent('intitle:' + book.title + (book.author ? ' inauthor:' + book.author : ''));
+          const gbResp = await fetch('https://www.googleapis.com/books/v1/volumes?q=' + q + '&maxResults=3&printType=books');
+          if (gbResp.ok) {
+            const gb = await gbResp.json();
+            const items = (gb && gb.items) || [];
+            const match = items.find(it => it && it.volumeInfo && it.volumeInfo.imageLinks && it.volumeInfo.imageLinks.thumbnail) || items[0];
+            if (match && match.volumeInfo) {
+              const v = match.volumeInfo;
+              google_books_id = match.id || null;
+              if (!pages) pages = v.pageCount || null;
+              if (v.imageLinks) {
+                const link = v.imageLinks.extraLarge || v.imageLinks.large || v.imageLinks.medium || v.imageLinks.small || v.imageLinks.thumbnail || v.imageLinks.smallThumbnail;
+                if (link) cover_url = link.replace(/^http:\/\//, 'https://').replace(/&edge=curl/g, '');
+              }
+            }
+          }
+        } catch (e) { /* non-fatal */ }
       }
     }
 
