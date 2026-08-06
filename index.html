@@ -526,7 +526,7 @@
         <button onclick="go('kid-home')" class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h1 class="h1" style="font-size:20px">Add a book</h1>
       </div>
-      <p class="px-6 small">Point at the cover.</p>
+      <p class="px-6 small">Point at the cover, or pick a photo you already took.</p>
       <div class="px-5 pt-4">
         <div class="viewfinder">
           <video id="cam-video" autoplay muted playsinline webkit-playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0A0A0A"></video>
@@ -537,9 +537,17 @@
           </div>
         </div>
       </div>
-      <div class="px-5 pt-5 flex items-center justify-center">
+      <div class="px-5 pt-5 grid items-center" style="grid-template-columns:1fr auto 1fr">
+        <div class="flex justify-start">
+          <button onclick="pickFromLibrary()" class="flex flex-col items-center gap-1" style="background:none;border:none;padding:6px 4px;color:var(--muted);cursor:pointer" aria-label="Choose a photo from the library">
+            <span class="icon-btn" style="pointer-events:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-6.5 6.5"/></svg></span>
+            <span style="font-size:10px;font-weight:600">Photos</span>
+          </button>
+        </div>
         <button onclick="captureFromVideo()" class="shutter"><div></div></button>
+        <div></div>
       </div>
+      <input id="photo-input" type="file" accept="image/*" style="display:none" onchange="handleLibraryPick(this)">
       <canvas id="cam-canvas" style="display:none"></canvas>
       <div class="px-5 pt-6 pb-6 mt-auto text-center">
         <button class="small font-medium" style="color:var(--accent)" onclick="go('confirm')">Type the title manually</button>
@@ -1830,6 +1838,46 @@
     catch (e) { toast('Could not capture image'); return; }
     stopCamera();
     handleCapturedImage(dataUrl);
+  }
+
+  // ===== Pick an existing photo from the device library =====
+  function pickFromLibrary() {
+    const input = document.getElementById('photo-input');
+    if (!input) { toast('Photo picker unavailable'); return; }
+    input.value = '';           // so re-picking the same photo still fires change
+    input.click();
+  }
+
+  function handleLibraryPick(input) {
+    const file = input && input.files && input.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type || '')) { toast('That is not a photo'); return; }
+    if (file.size > 25 * 1024 * 1024) { toast('That photo is too large'); return; }
+
+    const reader = new FileReader();
+    reader.onerror = () => toast('Could not read that photo');
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => toast('Could not open that photo');
+      img.onload = () => {
+        const canvas = document.getElementById('cam-canvas');
+        if (!canvas || !img.naturalWidth) { toast('Could not use that photo'); return; }
+        const maxW = 1024;
+        const scale = Math.min(1, maxW / img.naturalWidth);
+        canvas.width = Math.round(img.naturalWidth * scale);
+        canvas.height = Math.round(img.naturalHeight * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        let dataUrl;
+        try { dataUrl = canvas.toDataURL('image/jpeg', 0.85); }
+        catch (e) { toast('Could not use that photo'); return; }
+        input.value = '';
+        stopCamera();
+        handleCapturedImage(dataUrl);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
   }
 
   async function handleCapturedImage(dataUrl) {
